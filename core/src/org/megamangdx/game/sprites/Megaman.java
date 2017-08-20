@@ -80,11 +80,15 @@ public class Megaman extends Sprite {
     public TextureRegion getFrame(float dt) {
 
         switch (currentState) {
-            case STANDING: break;
-            case RUNNING: break;
-            case CLIMBING: break;
-            case FALLING: break;
-            default:;
+            case STANDING:
+                break;
+            case RUNNING:
+                break;
+            case CLIMBING:
+                break;
+            case FALLING:
+                break;
+            default:
         }
 
         return null;
