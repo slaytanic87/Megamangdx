@@ -1,0 +1,12 @@
+# Created by .ignore support plugin (hsz.mobi)
+*.iml
+target
+.idea
+/.idea/workspace.xml
+/.idea/copyright
+/.idea/libraries
+/.idea/checkstyle-idea.xml
+/.idea/compiler.xml
+/.idea/misc.xml
+/.idea/modules.xml
+workspace.xml
