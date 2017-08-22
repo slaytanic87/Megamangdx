@@ -7,10 +7,11 @@ import org.megamangdx.game.screens.PlayScreen;
 public class MegamanGame extends Game {
 
 	public SpriteBatch batch;
-	public static final int V_WIDTH = 800;
-	public static final int V_HEIGHT = 480;
-	public static final float PPM = 100;
+	public static final int V_WIDTH = 400;
+	public static final int V_HEIGHT = 400;
+	public static final float PPM = 400;
 
+	// Collision classes as bits
 	public static final short PLAYER_BIT = 1;
 	public static final short ENEMY_BIT = 2;
 
@@ -23,11 +24,11 @@ public class MegamanGame extends Game {
 	@Override
 	public void render () {
 		super.render();
-
 	}
 	
 	@Override
 	public void dispose () {
+		super.dispose();
 		batch.dispose();
 	}
 }

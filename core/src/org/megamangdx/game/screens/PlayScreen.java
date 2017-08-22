@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import lombok.Data;
 import org.megamangdx.game.MegamanGame;
@@ -26,6 +28,7 @@ public class PlayScreen implements Screen {
     private MegamanGame game;
     private Texture texture;
     private OrthographicCamera gameCamera;
+
     // for debugging purpose
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private Viewport viewport;
@@ -35,15 +38,34 @@ public class PlayScreen implements Screen {
     private World world;
     private Megaman player;
 
+    // Tiled map
+    private TmxMapLoader mapLoader;
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer renderer;
+
     public PlayScreen(MegamanGame game) {
         this.game = game;
-        this.texture = new Texture("badlogic.jpg");
+        //this.texture = new Texture("badlogic.jpg");
         gameCamera = new OrthographicCamera();
+
+        player = new Megaman(this);
 
         // make the gamewindow is stretch able with StretchViewport or
         // make the gamewindow is scaleable with FitViewport
-        viewport = new FitViewport(MegamanGame.V_WIDTH,
-                MegamanGame.V_HEIGHT, gameCamera);
+        viewport = new FitViewport(MegamanGame.V_WIDTH / MegamanGame.PPM,
+                MegamanGame.V_HEIGHT / MegamanGame.PPM, gameCamera);
+
+        // load map and setup map renderer
+        mapLoader = new TmxMapLoader();
+        map = mapLoader.load("Stage.tmx");
+
+        //tells the renderer how many pixels map to a single world unit
+        float unitScale = 1 / MegamanGame.PPM;
+        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+        gameCamera.position.set(viewport.getWorldWidth() / 2,
+                viewport.getWorldHeight() / 2, 0);
+
+        // create HUD Scores
         hud = new Hud(game.batch);
 
         //create our Box2D world, setting no gravity in X, -10 gravity in Y, and allow bodies to sleep
@@ -57,23 +79,34 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        //separate update logic from render
+        update(delta);
+
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // render the map
+        renderer.render();
+
         // tell game batch to recognize where the camera is in the game world
+        game.batch.setProjectionMatrix(gameCamera.combined);
+
+        game.batch.begin();
+        // drawplayer etc.
+        game.batch.end();
+
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
-
     }
 
     public void update(float delta) {
         //takes 1 step in the physics simulation(60 times per second)
         world.step(1 / 60f, 6, 2);
 
-        player.update(delta);
-
+        //player.update(delta);
+        hud.update(delta);
         gameCamera.update();
-
+        renderer.setView(gameCamera);
     }
 
     @Override

@@ -12,12 +12,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import org.megamangdx.game.MegamanGame;
 
 /**
- * Created by Lam on 12.08.17.
+ * @author Lam on 12.08.17.
  */
 public class Hud {
 
     public Stage stage;
     private Viewport viewport;
+
+    private boolean timeUp; // true when the world timer reaches 0
 
     private Integer worldTimer;
     private float timeCount;
@@ -41,20 +43,20 @@ public class Hud {
 
         Table table = new Table();
         table.top();
-        // table is size of the stage
+        // table fill the size of the stage
         table.setFillParent(true);
 
         countdownLabel = new Label(String.format("%03d", worldTimer),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        scoreMegamanLabel = new Label(String.format("%06d", worldTimer),
+        scoreMegamanLabel = new Label(String.format("%06d", score),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        timeLabel = new Label(String.format("TIME", worldTimer),
+        timeLabel = new Label("TIME",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        levelLabel = new Label(String.format("1-1", worldTimer),
+        levelLabel = new Label("PROTOMAN",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        megamanLabel = new Label(String.format("MEGAMAN", worldTimer),
+        megamanLabel = new Label("MEGAMAN",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        opponentLabel = new Label(String.format("OPPONENT", worldTimer),
+        opponentLabel = new Label("OPPONENT",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
         // first row
@@ -67,5 +69,23 @@ public class Hud {
         table.add(countdownLabel).expandX();
         table.add(levelLabel).expandX();
         stage.addActor(table);
+    }
+
+    public void update(float delta) {
+        timeCount += delta;
+        if(timeCount >= 1){
+            if (worldTimer > 0) {
+                worldTimer--;
+            } else {
+                timeUp = true;
+            }
+            countdownLabel.setText(String.format("%03d", worldTimer));
+            timeCount = 0;
+        }
+    }
+
+    public void addScore(int value) {
+        score += value;
+        scoreMegamanLabel.setText(String.format("%06d", score));
     }
 }
