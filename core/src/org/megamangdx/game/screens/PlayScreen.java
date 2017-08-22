@@ -1,6 +1,7 @@
 package org.megamangdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,6 +19,7 @@ import lombok.Data;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.scenes.Hud;
 import org.megamangdx.game.sprites.Megaman;
+import org.megamangdx.game.utils.B2WorldCreator;
 
 /**
  * @author Lam on 12.08.17.
@@ -43,12 +45,13 @@ public class PlayScreen implements Screen {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
+    private B2WorldCreator b2WorldCreator;
+
     public PlayScreen(MegamanGame game) {
         this.game = game;
         //this.texture = new Texture("badlogic.jpg");
         gameCamera = new OrthographicCamera();
 
-        player = new Megaman(this);
 
         // make the gamewindow is stretch able with StretchViewport or
         // make the gamewindow is scaleable with FitViewport
@@ -70,11 +73,24 @@ public class PlayScreen implements Screen {
 
         //create our Box2D world, setting no gravity in X, -10 gravity in Y, and allow bodies to sleep
         world = new World(new Vector2(0, -10), true);
+        //debugRenderer.SHAPE_STATIC.set(1,0,0,1);
+
+        player = new Megaman(this);
+        b2WorldCreator = new B2WorldCreator(this);
     }
 
     @Override
     public void show() {
 
+    }
+
+    public void handleInput(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2) {
+            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2) {
+            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+        }
     }
 
     @Override
@@ -88,6 +104,8 @@ public class PlayScreen implements Screen {
         // render the map
         renderer.render();
 
+        // render Bo2DDebugLines
+        debugRenderer.render(world, gameCamera.combined);
         // tell game batch to recognize where the camera is in the game world
         game.batch.setProjectionMatrix(gameCamera.combined);
 
@@ -100,6 +118,7 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float delta) {
+        handleInput(delta);
         //takes 1 step in the physics simulation(60 times per second)
         world.step(1 / 60f, 6, 2);
 

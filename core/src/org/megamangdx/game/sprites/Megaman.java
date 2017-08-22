@@ -34,6 +34,8 @@ public class Megaman extends Sprite {
 
     public Megaman(PlayScreen playScreen) {
         screen = playScreen;
+        world = screen.getWorld();
+        createMegaman();
 
         Array<TextureRegion> frames = new Array<TextureRegion>();
         /*
@@ -54,7 +56,7 @@ public class Megaman extends Sprite {
 
     public void createMegaman() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(32 / MegamanGame.PPM, 32 / MegamanGame.PPM);
+        bodyDef.position.set( 48/ MegamanGame.PPM, 48 / MegamanGame.PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bodyDef);
 
