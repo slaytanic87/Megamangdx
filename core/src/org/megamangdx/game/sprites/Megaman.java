@@ -56,7 +56,7 @@ public class Megaman extends Sprite {
 
     public void createMegaman() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set( 48/ MegamanGame.PPM, 48 / MegamanGame.PPM);
+        bodyDef.position.set( 48 / MegamanGame.PPM, 48 / MegamanGame.PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bodyDef);
 

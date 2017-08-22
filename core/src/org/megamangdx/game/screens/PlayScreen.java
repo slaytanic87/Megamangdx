@@ -98,6 +98,7 @@ public class PlayScreen implements Screen {
         //separate update logic from render
         update(delta);
 
+        // clear screen
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -122,7 +123,7 @@ public class PlayScreen implements Screen {
         //takes 1 step in the physics simulation(60 times per second)
         world.step(1 / 60f, 6, 2);
 
-        //player.update(delta);
+        player.update(delta);
         hud.update(delta);
         gameCamera.update();
         renderer.setView(gameCamera);
