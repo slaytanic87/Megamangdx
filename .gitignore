@@ -2,6 +2,7 @@
 *.iml
 target
 out/
+build/
 .idea
 /.idea/workspace.xml
 /.idea/copyright

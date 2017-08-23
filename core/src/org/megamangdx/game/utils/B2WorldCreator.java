@@ -8,6 +8,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.screens.PlayScreen;
 
+/**
+ * @author Lam
+ */
 public class B2WorldCreator {
 
     private World world;
@@ -17,14 +20,23 @@ public class B2WorldCreator {
         this.world = playScreen.getWorld();
         this.map = playScreen.getMap();
 
+        //create ground bodies/fixtures
+        createBoundaryBox("ground");
+        //create platform bodies/fixtures
+        createBoundaryBox("platform");
+        //create wall bodies/fixtures
+        createBoundaryBox("wall");
+
+    }
+
+    private void createBoundaryBox(String name) {
         //create body and fixture variables
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
         Body body;
 
-        //create ground bodies/fixtures
-        for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
+        for(MapObject object : map.getLayers().get(name).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -37,34 +49,6 @@ public class B2WorldCreator {
             fdef.shape = shape;
             body.createFixture(fdef);
         }
-
-        for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set((rect.getX() + rect.getWidth() / 2) / MegamanGame.PPM,
-                    (rect.getY() + rect.getHeight() / 2) / MegamanGame.PPM);
-
-            body = world.createBody(bdef);
-
-            shape.setAsBox(rect.getWidth() / 2 / MegamanGame.PPM, rect.getHeight() / 2 / MegamanGame.PPM);
-            fdef.shape = shape;
-            body.createFixture(fdef);
-        }
-
-        for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set((rect.getX() + rect.getWidth() / 2) / MegamanGame.PPM,
-                    (rect.getY() + rect.getHeight() / 2) / MegamanGame.PPM);
-
-            body = world.createBody(bdef);
-
-            shape.setAsBox(rect.getWidth() / 2 / MegamanGame.PPM, rect.getHeight() / 2 / MegamanGame.PPM);
-            fdef.shape = shape;
-            body.createFixture(fdef);
-        }
-
     }
+
 }

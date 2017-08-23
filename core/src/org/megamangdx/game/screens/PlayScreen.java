@@ -52,7 +52,6 @@ public class PlayScreen implements Screen {
         //this.texture = new Texture("badlogic.jpg");
         gameCamera = new OrthographicCamera();
 
-
         // make the gamewindow is stretch able with StretchViewport or
         // make the gamewindow is scaleable with FitViewport
         viewport = new FitViewport(MegamanGame.V_WIDTH / MegamanGame.PPM,
@@ -85,11 +84,14 @@ public class PlayScreen implements Screen {
     }
 
     public void handleInput(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2) {
-            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.getLinearVelocity().x <= Megaman.MAX_VELOCITY) {
+            player.moveRight();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2) {
-            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.getLinearVelocity().x >= -Megaman.MAX_VELOCITY) {
+            player.moveLeft();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT) && player.getLinearVelocity().y == 0) {
+            player.jump();
         }
     }
 
