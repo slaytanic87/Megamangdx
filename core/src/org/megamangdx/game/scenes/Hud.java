@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.megamangdx.game.MegamanGame;
@@ -14,28 +15,30 @@ import org.megamangdx.game.MegamanGame;
 /**
  * @author Lam on 12.08.17.
  */
-public class Hud {
+public class Hud implements Disposable {
 
     public Stage stage;
     private Viewport viewport;
 
-    private boolean timeUp; // true when the world timer reaches 0
+    private boolean timeUp = false; // true when the world timer reaches 0
 
     private Integer worldTimer;
     private float timeCount;
     private Integer score;
+    private Integer opponentScore;
 
     Label countdownLabel;
     Label scoreMegamanLabel;
     Label timeLabel;
-    Label levelLabel;
-    Label megamanLabel;
     Label opponentLabel;
+    Label megamanLabel;
+    Label opponentScoreLabel;
 
     public Hud(SpriteBatch batch) {
         worldTimer = 300;
         timeCount = 0;
         score = 0;
+        opponentScore = 0;
 
         viewport = new FitViewport(MegamanGame.V_WIDTH,
                 MegamanGame.V_HEIGHT, new OrthographicCamera());
@@ -50,15 +53,14 @@ public class Hud {
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         scoreMegamanLabel = new Label(String.format("%06d", score),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        opponentScoreLabel = new Label(String.format("%06d", opponentScore),
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         timeLabel = new Label("TIME",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        levelLabel = new Label("PROTOMAN",
+        opponentLabel = new Label("PROTOMAN",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         megamanLabel = new Label("MEGAMAN",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        opponentLabel = new Label("OPPONENT",
-                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
         // first row
         table.add(megamanLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
@@ -67,7 +69,7 @@ public class Hud {
         // second row
         table.add(scoreMegamanLabel).expandX();
         table.add(countdownLabel).expandX();
-        table.add(levelLabel).expandX();
+        table.add(opponentScoreLabel).expandX();
         stage.addActor(table);
     }
 
@@ -84,8 +86,18 @@ public class Hud {
         }
     }
 
-    public void addScore(int value) {
+    public void addPlayerScore(int value) {
         score += value;
         scoreMegamanLabel.setText(String.format("%06d", score));
+    }
+
+    public void addOpponentScore(int value) {
+        opponentScore += value;
+        opponentScoreLabel.setText(String.format("%06d", opponentScore));
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
     }
 }

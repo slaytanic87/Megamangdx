@@ -1,0 +1,125 @@
+
+megamanbase.png
+size: 256,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Climb1
+  rotate: false
+  xy: 75, 4
+  size: 18, 31
+  orig: 18, 31
+  offset: 0, 0
+  index: -1
+Climb2
+  rotate: false
+  xy: 95, 4
+  size: 18, 31
+  orig: 18, 31
+  offset: 0, 0
+  index: -1
+Jump
+  rotate: false
+  xy: 35, 31
+  size: 27, 31
+  orig: 27, 31
+  offset: 0, 0
+  index: -1
+Jump_shoot
+  rotate: false
+  xy: 2, 30
+  size: 31, 32
+  orig: 31, 32
+  offset: 0, 0
+  index: -1
+Run0
+  rotate: false
+  xy: 222, 36
+  size: 23, 26
+  orig: 23, 26
+  offset: 0, 0
+  index: -1
+Run1
+  rotate: false
+  xy: 195, 37
+  size: 25, 25
+  orig: 25, 25
+  offset: 0, 0
+  index: -1
+Run2
+  rotate: false
+  xy: 52, 4
+  size: 21, 25
+  orig: 21, 25
+  offset: 0, 0
+  index: -1
+Run3
+  rotate: false
+  xy: 115, 11
+  size: 23, 25
+  orig: 23, 25
+  offset: 0, 0
+  index: -1
+Run_shoot1
+  rotate: false
+  xy: 99, 38
+  size: 31, 24
+  orig: 31, 24
+  offset: 0, 0
+  index: -1
+Run_shoot2
+  rotate: false
+  xy: 165, 37
+  size: 28, 25
+  orig: 28, 25
+  offset: 0, 0
+  index: -1
+Run_shoot3
+  rotate: false
+  xy: 132, 38
+  size: 31, 24
+  orig: 31, 24
+  offset: 0, 0
+  index: -1
+Stand1
+  rotate: false
+  xy: 2, 2
+  size: 23, 26
+  orig: 23, 26
+  offset: 0, 0
+  index: -1
+Stand2
+  rotate: false
+  xy: 27, 2
+  size: 23, 26
+  orig: 23, 26
+  offset: 0, 0
+  index: -1
+Stand_shoot
+  rotate: false
+  xy: 64, 37
+  size: 33, 25
+  orig: 33, 25
+  offset: 0, 0
+  index: -1
+normal1
+  rotate: false
+  xy: 183, 27
+  size: 10, 8
+  orig: 10, 8
+  offset: 0, 0
+  index: -1
+normal2
+  rotate: false
+  xy: 140, 16
+  size: 19, 20
+  orig: 19, 20
+  offset: 0, 0
+  index: -1
+normal3
+  rotate: false
+  xy: 161, 21
+  size: 20, 14
+  orig: 20, 14
+  offset: 0, 0
+  index: -1

@@ -49,6 +49,9 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(MegamanGame game) {
         this.game = game;
+
+        atlas = new TextureAtlas("megamanbase.atlas");
+
         //this.texture = new Texture("badlogic.jpg");
         gameCamera = new OrthographicCamera();
 
@@ -153,6 +156,10 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        map.dispose();
+        renderer.dispose();
+        world.dispose();
+        debugRenderer.dispose();
+        hud.dispose();
     }
 }

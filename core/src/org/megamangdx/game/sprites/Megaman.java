@@ -1,6 +1,7 @@
 package org.megamangdx.game.sprites;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -21,7 +22,7 @@ public class Megaman extends Sprite {
     public static final int START_POSX = 48;
     public static final int START_POSY = 48;
 
-    private ObjectState prevState;
+    private ObjectState prevState = ObjectState.STANDING;
     private ObjectState currentState = ObjectState.STANDING;
 
     public World world;
@@ -35,8 +36,14 @@ public class Megaman extends Sprite {
 
     private Array<GunShoot> gunShoots = new Array<GunShoot>();
 
+    private PlayScreen playScreen;
+
+    private boolean rightDirection;
+
     public Megaman(PlayScreen playScreen) {
         world = playScreen.getWorld();
+        this.playScreen = playScreen;
+        this.rightDirection = true;
         createMegaman();
 
         Array<TextureRegion> frames = new Array<TextureRegion>();
@@ -78,6 +85,13 @@ public class Megaman extends Sprite {
 
     public void update(float dt) {
 
+        // delete Gun shoot
+        for (GunShoot shoot : gunShoots) {
+            shoot.update(dt);
+            if (shoot.isDestroyed()) {
+                gunShoots.removeValue(shoot, true);
+            }
+        }
     }
 
     public void moveRight() {
@@ -90,6 +104,15 @@ public class Megaman extends Sprite {
 
     public void jump() {
         b2body.applyLinearImpulse(new Vector2(0, 1.8f), b2body.getWorldCenter(), true);
+    }
+
+    public void shoot() {
+        gunShoots.add(new GunShoot(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
+                GunShoot.WeaponType.NORMAL));
+    }
+
+    public void hit() {
+        // TODO is hit by enemy
     }
 
     public Vector2 getLinearVelocity() {
@@ -111,6 +134,14 @@ public class Megaman extends Sprite {
         }
 
         return null;
+    }
+
+    @Override
+    public void draw(Batch batch) {
+        super.draw(batch);
+        for (GunShoot shoot: gunShoots) {
+            shoot.draw(batch);
+        }
     }
 
     public ObjectState getState() {
