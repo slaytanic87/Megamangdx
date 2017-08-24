@@ -28,13 +28,13 @@ public class Megaman extends Sprite {
     public World world;
     public Body b2body;
 
-    private Animation megamanRun;
-    private Animation megamanStand;
-    private Animation megamanClimb;
+    private Animation<TextureRegion> megamanRun;
+    private Animation<TextureRegion> megamanStand;
+    private Animation<TextureRegion> megamanClimb;
 
     private TextureRegion megamanJump;
 
-    private Array<GunShoot> gunShoots = new Array<GunShoot>();
+    private Array<GunShot> gunShots = new Array<GunShot>();
 
     private PlayScreen playScreen;
 
@@ -46,20 +46,24 @@ public class Megaman extends Sprite {
         this.rightDirection = true;
         createMegaman();
 
+        createStandAnimation();
+        createRunAnimation();
+
+    }
+
+    private void createRunAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        /*
-        //get run animation frames and add them to marioRun Animation
-        for(int i = 1; i < 4; i++)
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("megaman_move"), i * 16, 0, 16, 16));
-        megaman_move = new Animation(0.1f, frames);
+        for (int i = 0; i <= 3; i++) {
+            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Run" + i)));
+        }
+        megamanRun = new Animation<TextureRegion>(0.1f, frames);
+    }
 
-        frames.clear();
-
-        for(int i = 1; i < 4; i++)
-            frames.add(new TextureRegion(screen.getAtlas().findRegion("megaman_jump"), i * 16, 0, 16, 32));
-        megaman_jump = new Animation(0.1f, frames);
-        * */
-
+    private void createStandAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand1")));
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand2")));
+        megamanStand = new Animation<TextureRegion>(0.1f, frames);
     }
 
     public void createMegaman() {
@@ -86,10 +90,10 @@ public class Megaman extends Sprite {
     public void update(float dt) {
 
         // delete Gun shoot
-        for (GunShoot shoot : gunShoots) {
+        for (GunShot shoot : gunShots) {
             shoot.update(dt);
             if (shoot.isDestroyed()) {
-                gunShoots.removeValue(shoot, true);
+                gunShots.removeValue(shoot, true);
             }
         }
     }
@@ -103,12 +107,12 @@ public class Megaman extends Sprite {
     }
 
     public void jump() {
-        b2body.applyLinearImpulse(new Vector2(0, 1.8f), b2body.getWorldCenter(), true);
+        b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
     }
 
     public void shoot() {
-        gunShoots.add(new GunShoot(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
-                GunShoot.WeaponType.NORMAL));
+        gunShots.add(new GunShot(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
+                GunShot.WeaponType.NORMAL));
     }
 
     public void hit() {
@@ -119,7 +123,7 @@ public class Megaman extends Sprite {
         return b2body.getLinearVelocity();
     }
 
-    public TextureRegion getFrame(float dt) {
+    public TextureRegion getFrame(float delta) {
         // TODO implement textures
         switch (currentState) {
             case STANDING:
@@ -139,7 +143,7 @@ public class Megaman extends Sprite {
     @Override
     public void draw(Batch batch) {
         super.draw(batch);
-        for (GunShoot shoot: gunShoots) {
+        for (GunShot shoot: gunShots) {
             shoot.draw(batch);
         }
     }
