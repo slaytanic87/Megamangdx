@@ -11,7 +11,7 @@ import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.screens.PlayScreen;
 
 /**
- * Created by Lam on 14.08.17.
+ * @author Lam
  */
 public class GunShot extends Sprite {
 

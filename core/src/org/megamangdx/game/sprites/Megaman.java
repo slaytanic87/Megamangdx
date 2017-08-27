@@ -39,6 +39,8 @@ public class Megaman extends Sprite {
     private PlayScreen playScreen;
 
     private boolean rightDirection;
+    private boolean isDead = false;
+    private float stateTimer = 0;
 
     public Megaman(PlayScreen playScreen) {
         world = playScreen.getWorld();
@@ -85,13 +87,21 @@ public class Megaman extends Sprite {
         fixtureDef.shape = shape;
         // set Spritedata
         b2body.createFixture(fixtureDef).setUserData(this);
+
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-2 / MegamanGame.PPM, 6 / MegamanGame.PPM),
+                new Vector2(2 / MegamanGame.PPM, 6 / MegamanGame.PPM));
+        // fixtureDef.filter.categoryBits
+        fixtureDef.shape = head;
+        fixtureDef.isSensor = true;
+        b2body.createFixture(fixtureDef).setUserData(this);
     }
 
-    public void update(float dt) {
-
+    public void update(float delta) {
+        setRegion(getFrame(delta));
         // delete Gun shoot
         for (GunShot shoot : gunShots) {
-            shoot.update(dt);
+            shoot.update(delta);
             if (shoot.isDestroyed()) {
                 gunShots.removeValue(shoot, true);
             }
@@ -106,8 +116,15 @@ public class Megaman extends Sprite {
         b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
     }
 
+    public void die() {
+        this.isDead = true;
+    }
+
     public void jump() {
-        b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
+        if (currentState != ObjectState.JUMPING) {
+            b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
+            currentState = ObjectState.JUMPING;
+        }
     }
 
     public void shoot() {
@@ -124,35 +141,64 @@ public class Megaman extends Sprite {
     }
 
     public TextureRegion getFrame(float delta) {
+        currentState = getState();
         // TODO implement textures
+        TextureRegion textureRegion = null;
         switch (currentState) {
-            case STANDING:
+            case DEAD:
                 break;
             case RUNNING:
+                textureRegion = megamanRun.getKeyFrame(delta, true);
                 break;
             case CLIMBING:
                 break;
+            case JUMPING:
             case FALLING:
+                textureRegion = megamanStand.getKeyFrame(delta, true);
+                break;
+            case STANDING:
+                textureRegion = megamanStand.getKeyFrame(delta, true);
                 break;
             default:
         }
 
-        return null;
+        if ((getLinearVelocity().x < 0 || !rightDirection) && !textureRegion.isFlipX()) {
+            textureRegion.flip(true, false);
+            rightDirection = true;
+        } else if ((getLinearVelocity().x > 0 || rightDirection)
+                && textureRegion.isFlipX()) {
+            textureRegion.flip(true, false);
+            rightDirection = false;
+        }
+
+        stateTimer = (currentState == prevState) ? stateTimer + delta : 0;
+        prevState = currentState;
+
+        return textureRegion;
     }
 
     @Override
     public void draw(Batch batch) {
         super.draw(batch);
+
         for (GunShot shoot: gunShots) {
             shoot.draw(batch);
         }
     }
 
     public ObjectState getState() {
+        if (isDead) {
+            return  ObjectState.DEAD;
+        }
+        if ((getLinearVelocity().y > 0 && currentState == ObjectState.JUMPING) ||
+                (getLinearVelocity().y < 0 && prevState == ObjectState.JUMPING)) {
+            return ObjectState.JUMPING;
+        }
+        if (getLinearVelocity().y < 0) {
+            return ObjectState.FALLING;
+        }
         if (getLinearVelocity().x != 0) {
             return ObjectState.RUNNING;
-        } else if (getLinearVelocity().y != 0) {
-            return ObjectState.JUMPING;
         }
         return ObjectState.STANDING;
     }

@@ -9,6 +9,7 @@ public enum ObjectState {
     FALLING,
     RUNNING,
     CLIMBING,
+    DEAD,
     STANDING;
 
 }

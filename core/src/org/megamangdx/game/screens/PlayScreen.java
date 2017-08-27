@@ -101,10 +101,10 @@ public class PlayScreen implements Screen {
     @Override
     public void render(float delta) {
         //separate update logic from render
-        update(delta);
+        this.update(delta);
 
         // clear screen
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // render the map
@@ -114,9 +114,10 @@ public class PlayScreen implements Screen {
         debugRenderer.render(world, gameCamera.combined);
         // tell game batch to recognize where the camera is in the game world
         game.batch.setProjectionMatrix(gameCamera.combined);
-
         game.batch.begin();
-        // drawplayer etc.
+        // drawplayer
+        player.draw(game.batch);
+        // TODO draw enemies etc.
         game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
