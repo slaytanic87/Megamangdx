@@ -115,10 +115,10 @@ public class Megaman extends Sprite {
     }
 
     public void update(float delta) {
-        setRegion(getFrame(delta));
 
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
 
+        setRegion(getFrame(delta));
         // delete Gun shoot
         for (GunShot shoot : gunShots) {
             shoot.update(delta);
@@ -164,7 +164,8 @@ public class Megaman extends Sprite {
         currentState = getState();
         // TODO implement textures
         TextureRegion textureRegion = null;
-        setBounds(0, 0, START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
+        setBounds(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2,
+                START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
 
         switch (currentState) {
             case DEAD:
@@ -173,6 +174,7 @@ public class Megaman extends Sprite {
                 textureRegion = megamanRun.getKeyFrame(delta, true);
                 break;
             case CLIMBING:
+                textureRegion = megamanClimb.getKeyFrame(delta, true);
                 break;
             case STANDING:
                 textureRegion = megamanStand.getKeyFrame(delta, true);
@@ -180,7 +182,8 @@ public class Megaman extends Sprite {
             case JUMPING:
             case FALLING:
             default:
-                setBounds(0, 0, 27 / MegamanGame.PPM, 32 / MegamanGame.PPM);
+                setBounds(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2
+                        , 27 / MegamanGame.PPM, 32 / MegamanGame.PPM);
                 textureRegion = megamanJump;
                 break;
         }

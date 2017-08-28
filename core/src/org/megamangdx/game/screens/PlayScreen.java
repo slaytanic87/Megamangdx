@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import lombok.Data;
 import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.ObjectState;
 import org.megamangdx.game.scenes.Hud;
 import org.megamangdx.game.sprites.Megaman;
 import org.megamangdx.game.utils.B2WorldCreator;
@@ -131,6 +132,11 @@ public class PlayScreen implements Screen {
 
         player.update(delta);
         hud.update(delta);
+
+//        if (player.getCurrentState() != ObjectState.DEAD) {
+//            gameCamera.position.x = player.b2body.getPosition().x;
+//        }
+
         gameCamera.update();
         renderer.setView(gameCamera);
     }
