@@ -111,7 +111,7 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         // render Bo2DDebugLines
-        debugRenderer.render(world, gameCamera.combined);
+        //debugRenderer.render(world, gameCamera.combined);
         // tell game batch to recognize where the camera is in the game world
         game.batch.setProjectionMatrix(gameCamera.combined);
         game.batch.begin();

@@ -19,8 +19,8 @@ import org.megamangdx.game.screens.PlayScreen;
 public class Megaman extends Sprite {
 
     public static final float MAX_VELOCITY = 1.2f;
-    public static final int START_POSX = 32;
-    public static final int START_POSY = 32;
+    public static final int START_POSX = 24;
+    public static final int START_POSY = 24;
 
     private ObjectState prevState = ObjectState.STANDING;
     private ObjectState currentState = ObjectState.STANDING;
@@ -53,7 +53,7 @@ public class Megaman extends Sprite {
         createMegamanJump();
         createMegamanClimb();
 
-        setBounds(0, 0, 32 / MegamanGame.PPM, 32 / MegamanGame.PPM);
+        setBounds(0, 0, START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
     }
 
     private void createRunAnimation() {
@@ -94,7 +94,7 @@ public class Megaman extends Sprite {
         // A fixture has a shape, density, friction and restitution attached to it
         FixtureDef fixtureDef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(12 / MegamanGame.PPM);
+        shape.setRadius(11 / MegamanGame.PPM);
 
         /* TODO Filter collision categories
         fixtureDef.filter.categoryBits =
@@ -164,6 +164,8 @@ public class Megaman extends Sprite {
         currentState = getState();
         // TODO implement textures
         TextureRegion textureRegion = null;
+        setBounds(0, 0, START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
+
         switch (currentState) {
             case DEAD:
                 break;
@@ -178,6 +180,7 @@ public class Megaman extends Sprite {
             case JUMPING:
             case FALLING:
             default:
+                setBounds(0, 0, 27 / MegamanGame.PPM, 32 / MegamanGame.PPM);
                 textureRegion = megamanJump;
                 break;
         }
