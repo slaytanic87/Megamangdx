@@ -19,8 +19,8 @@ import org.megamangdx.game.screens.PlayScreen;
 public class Megaman extends Sprite {
 
     public static final float MAX_VELOCITY = 1.2f;
-    public static final int START_POSX = 48;
-    public static final int START_POSY = 48;
+    public static final int START_POSX = 32;
+    public static final int START_POSY = 32;
 
     private ObjectState prevState = ObjectState.STANDING;
     private ObjectState currentState = ObjectState.STANDING;
@@ -50,7 +50,10 @@ public class Megaman extends Sprite {
 
         createStandAnimation();
         createRunAnimation();
+        createMegamanJump();
+        createMegamanClimb();
 
+        setBounds(0, 0, 32 / MegamanGame.PPM, 32 / MegamanGame.PPM);
     }
 
     private void createRunAnimation() {
@@ -63,9 +66,23 @@ public class Megaman extends Sprite {
 
     private void createStandAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand1")));
-        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand2")));
-        megamanStand = new Animation<TextureRegion>(0.1f, frames);
+        for (int i = 1; i <= 2; i++) {
+            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand" + i)));
+        }
+        megamanStand = new Animation<TextureRegion>(0.9f, frames);
+//        setRegion(frames.get(0));
+    }
+
+    private void createMegamanJump() {
+        megamanJump = new TextureRegion(playScreen.getAtlas().findRegion("Jump"));
+    }
+
+    private void createMegamanClimb() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i = 1; i <= 2; i++) {
+            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Climb" + i)));
+        }
+        megamanClimb = new Animation<TextureRegion>(0.1f, frames);
     }
 
     public void createMegaman() {
@@ -77,7 +94,7 @@ public class Megaman extends Sprite {
         // A fixture has a shape, density, friction and restitution attached to it
         FixtureDef fixtureDef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(6 / MegamanGame.PPM);
+        shape.setRadius(12 / MegamanGame.PPM);
 
         /* TODO Filter collision categories
         fixtureDef.filter.categoryBits =
@@ -88,17 +105,20 @@ public class Megaman extends Sprite {
         // set Spritedata
         b2body.createFixture(fixtureDef).setUserData(this);
 
-        EdgeShape head = new EdgeShape();
-        head.set(new Vector2(-2 / MegamanGame.PPM, 6 / MegamanGame.PPM),
-                new Vector2(2 / MegamanGame.PPM, 6 / MegamanGame.PPM));
-        // fixtureDef.filter.categoryBits
-        fixtureDef.shape = head;
-        fixtureDef.isSensor = true;
-        b2body.createFixture(fixtureDef).setUserData(this);
+//        EdgeShape head = new EdgeShape();
+//        head.set(new Vector2(-2 / MegamanGame.PPM, 6 / MegamanGame.PPM),
+//                new Vector2(2 / MegamanGame.PPM, 6 / MegamanGame.PPM));
+//        // fixtureDef.filter.categoryBits
+//        fixtureDef.shape = head;
+//        fixtureDef.isSensor = true;
+//        b2body.createFixture(fixtureDef).setUserData(this);
     }
 
     public void update(float delta) {
         setRegion(getFrame(delta));
+
+        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+
         // delete Gun shoot
         for (GunShot shoot : gunShots) {
             shoot.update(delta);
@@ -152,23 +172,23 @@ public class Megaman extends Sprite {
                 break;
             case CLIMBING:
                 break;
-            case JUMPING:
-            case FALLING:
-                textureRegion = megamanStand.getKeyFrame(delta, true);
-                break;
             case STANDING:
                 textureRegion = megamanStand.getKeyFrame(delta, true);
                 break;
+            case JUMPING:
+            case FALLING:
             default:
+                textureRegion = megamanJump;
+                break;
         }
 
         if ((getLinearVelocity().x < 0 || !rightDirection) && !textureRegion.isFlipX()) {
             textureRegion.flip(true, false);
-            rightDirection = true;
+            rightDirection = false;
         } else if ((getLinearVelocity().x > 0 || rightDirection)
                 && textureRegion.isFlipX()) {
             textureRegion.flip(true, false);
-            rightDirection = false;
+            rightDirection = true;
         }
 
         stateTimer = (currentState == prevState) ? stateTimer + delta : 0;
