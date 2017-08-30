@@ -46,7 +46,7 @@ public class GunShot extends Sprite {
 
         fireAnimation = new Animation<TextureRegion>(0.2f, frames);
         setRegion(fireAnimation.getKeyFrame(0));
-        setBounds(x, y, 6 / MegamanGame.PPM, 6 / MegamanGame.PPM);
+        setBounds(x, y, 12 / MegamanGame.PPM, 10 / MegamanGame.PPM);
 
         createWeapon();
     }

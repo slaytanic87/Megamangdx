@@ -96,7 +96,7 @@ public class Megaman extends Sprite {
         for (int i = 1; i <= 2; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand" + i)));
         }
-        megamanStand = new Animation<TextureRegion>(0.2f, frames);
+        megamanStand = new Animation<TextureRegion>(0.6f, frames);
     }
 
     private void createStandShootTexture() {
@@ -280,6 +280,12 @@ public class Megaman extends Sprite {
         } else if ((getLinearVelocity().x > 0 || rightDirection) && textureRegion.isFlipX()) {
             textureRegion.flip(true, false);
             rightDirection = true;
+        }
+
+        // reset shoot state if animation is over
+        if (megamanStandShoot.isAnimationFinished(stateTimer) && megamanRunShoot.isAnimationFinished(stateTimer)
+                && megamanJumpShoot.isAnimationFinished(stateTimer)) {
+            isShooting = false;
         }
 
         // reset shoot state if the state is changing from shooting mode to not shooting mode
