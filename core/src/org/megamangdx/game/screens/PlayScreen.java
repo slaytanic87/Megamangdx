@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import lombok.Data;
 import org.megamangdx.game.MegamanGame;
-import org.megamangdx.game.ObjectState;
 import org.megamangdx.game.scenes.Hud;
 import org.megamangdx.game.sprites.Megaman;
 import org.megamangdx.game.utils.B2WorldCreator;
@@ -97,6 +96,9 @@ public class PlayScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT) && player.getLinearVelocity().y == 0) {
             player.jump();
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
+            player.shoot();
+        }
     }
 
     @Override
@@ -112,7 +114,7 @@ public class PlayScreen implements Screen {
         renderer.render();
 
         // render Bo2DDebugLines
-        //debugRenderer.render(world, gameCamera.combined);
+        debugRenderer.render(world, gameCamera.combined);
         // tell game batch to recognize where the camera is in the game world
         game.batch.setProjectionMatrix(gameCamera.combined);
         game.batch.begin();

@@ -59,7 +59,8 @@ public class GunShot extends Sprite {
         if (!world.isLocked()) {
             b2body = world.createBody(bodyDef);
         }
-
+        // no gravity
+        b2body.setGravityScale(0);
         FixtureDef fixtureDef = new FixtureDef();
         CircleShape shape = new CircleShape();
         shape.setRadius(3 / MegamanGame.PPM);
@@ -71,12 +72,13 @@ public class GunShot extends Sprite {
         fixtureDef.restitution = 1;
         fixtureDef.friction = 0;
         b2body.createFixture(fixtureDef).setUserData(this);
-        b2body.setLinearVelocity(new Vector2(rightDirection ? 2 : -2, 2.5f));
+        b2body.setLinearVelocity(new Vector2(rightDirection ? 2 : -2, 0));
     }
 
     public void update(float delta) {
         stateTime += delta;
         setRegion(fireAnimation.getKeyFrame(stateTime, true));
+
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
 
         if (setToDestroy && !destroyed) {

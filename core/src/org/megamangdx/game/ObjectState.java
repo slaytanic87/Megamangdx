@@ -6,10 +6,13 @@ package org.megamangdx.game;
 public enum ObjectState {
 
     JUMPING,
+    JUMPING_SHOOT,
     FALLING,
     RUNNING,
+    RUNNING_SHOOT,
     CLIMBING,
     DEAD,
-    STANDING;
+    STANDING,
+    STANDING_SHOOT;
 
 }
