@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sun.media.jfxmedia.logging.Logger;
 import org.megamangdx.game.MegamanGame;
 
 /**
@@ -40,13 +39,10 @@ public class MenuScreen implements Screen {
 
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            Logger.logMsg(Logger.DEBUG ,"Key is move up");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            Logger.logMsg(Logger.DEBUG ,"Key is move down");
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            Logger.logMsg(Logger.DEBUG ,"Space was pressed");
         }
     }
 
