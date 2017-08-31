@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -32,6 +33,7 @@ public class Protoman extends Sprite implements Telegraph {
     private boolean rightDirection;
 
     private boolean isDead = false;
+    private boolean isShooting = false;
 
     private Array<Bullet> gunShots = new Array<Bullet>();
 
@@ -47,6 +49,23 @@ public class Protoman extends Sprite implements Telegraph {
         return false;
     }
 
+
+    public void moveLeft() {
+        b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
+
+    }
+
+    public void moveRight() {
+        b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
+    }
+
+    public void jump() {
+        if (currentState != ObjectState.JUMPING) {
+            b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
+            currentState = ObjectState.JUMPING;
+        }
+    }
+
     private ObjectState getState() {
         if (isDead) {
             return ObjectState.DEAD;
@@ -56,7 +75,7 @@ public class Protoman extends Sprite implements Telegraph {
 
     private TextureRegion getFrame(float delta) {
         ObjectState state = getState();
-
+        TextureRegion textureRegion = null;
         switch (state) {
             case DEAD:
                 // TODO sprite
@@ -73,7 +92,7 @@ public class Protoman extends Sprite implements Telegraph {
                 break;
         }
 
-        return null;
+        return textureRegion;
     }
 
     public void update(float delta) {

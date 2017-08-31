@@ -86,7 +86,7 @@ public class PlayScreen implements Screen {
 
     }
 
-    public void handleInput(float delta) {
+    private void handleInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.getLinearVelocity().x <= Megaman.MAX_VELOCITY) {
             player.moveRight();
         }
@@ -128,7 +128,7 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float delta) {
-        handleInput(delta);
+        handleInput();
         //takes 1 step in the physics simulation(60 times per second)
         world.step(1 / 60f, 6, 2);
 
