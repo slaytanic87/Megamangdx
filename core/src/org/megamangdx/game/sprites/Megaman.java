@@ -38,7 +38,7 @@ public class Megaman extends Sprite {
 
     private TextureRegion megamanJump;
 
-    private Array<GunShot> gunShots = new Array<GunShot>();
+    private Array<Bullet> gunShots = new Array<Bullet>();
 
     private PlayScreen playScreen;
 
@@ -68,7 +68,7 @@ public class Megaman extends Sprite {
 
     private void createRunAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 0; i <= 3; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Run" + i)));
         }
         megamanRun = new Animation<TextureRegion>(0.077f, frames);
@@ -96,7 +96,7 @@ public class Megaman extends Sprite {
         for (int i = 1; i <= 2; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand" + i)));
         }
-        megamanStand = new Animation<TextureRegion>(0.6f, frames);
+        megamanStand = new Animation<TextureRegion>(0.9f, frames);
     }
 
     private void createStandShootTexture() {
@@ -118,7 +118,7 @@ public class Megaman extends Sprite {
         megamanClimb = new Animation<TextureRegion>(0.1f, frames);
     }
 
-    public void createMegamanModel() {
+    private void createMegamanModel() {
         BodyDef bodyDef = new BodyDef();
         bodyDef.position.set(START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -153,7 +153,7 @@ public class Megaman extends Sprite {
 
         setRegion(getFrame(delta));
         // delete Gun shoot
-        for (GunShot shoot : gunShots) {
+        for (Bullet shoot : gunShots) {
             shoot.update(delta);
             if (shoot.isDestroyed()) {
                 gunShots.removeValue(shoot, true);
@@ -189,8 +189,8 @@ public class Megaman extends Sprite {
 
     public void shoot() {
         isShooting = true;
-        gunShots.add(new GunShot(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
-                GunShot.WeaponType.NORMAL));
+        gunShots.add(new Bullet(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
+                Bullet.WeaponType.NORMAL));
         // if the player is in the air and shoot button was hit
         if (currentState == ObjectState.JUMPING || currentState == ObjectState.FALLING) {
             currentState = ObjectState.JUMPING_SHOOT;
@@ -304,7 +304,7 @@ public class Megaman extends Sprite {
     public void draw(Batch batch) {
         super.draw(batch);
 
-        for (GunShot shoot: gunShots) {
+        for (Bullet shoot: gunShots) {
             shoot.draw(batch);
         }
     }

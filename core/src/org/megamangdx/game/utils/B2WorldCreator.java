@@ -29,7 +29,8 @@ public class B2WorldCreator {
 
     }
 
-    private void createBoundaryBox(String name) {
+
+    public void createBoundaryBox(String name) {
         //create body and fixture variables
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();

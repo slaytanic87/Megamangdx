@@ -13,7 +13,7 @@ import org.megamangdx.game.screens.PlayScreen;
 /**
  * @author Lam
  */
-public class GunShot extends Sprite {
+public class Bullet extends Sprite {
 
     public enum WeaponType  { NORMAL }
 
@@ -33,7 +33,7 @@ public class GunShot extends Sprite {
     private boolean destroyed;
     private boolean setToDestroy;
 
-    public GunShot(PlayScreen playScreen, float x, float y, boolean rightDirection, WeaponType weaponType) {
+    public Bullet(PlayScreen playScreen, float x, float y, boolean rightDirection, WeaponType weaponType) {
         screen = playScreen;
         world = playScreen.getWorld();
         this.rightDirection = rightDirection;
