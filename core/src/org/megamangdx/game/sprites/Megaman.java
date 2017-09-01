@@ -71,7 +71,7 @@ public class Megaman extends Sprite {
         for (int i = 1; i <= 3; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Run" + i)));
         }
-        megamanRun = new Animation<TextureRegion>(0.077f, frames);
+        megamanRun = new Animation<TextureRegion>(0.087f, frames);
     }
 
     private void createRunShootAnimation() {

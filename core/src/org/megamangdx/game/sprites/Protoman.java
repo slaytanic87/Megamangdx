@@ -30,7 +30,7 @@ public class Protoman extends Sprite implements Telegraph {
     private TextureRegion protomanJump;
     private TextureRegion protomanJumpShoot;
 
-    private boolean rightDirection;
+    private boolean rightDirection = false;
 
     private boolean isDead = false;
     private boolean isShooting = false;
