@@ -57,11 +57,11 @@ public class Megaman extends Sprite {
 
         createStandAnimation();
         createRunAnimation();
-        createMegamanJump();
-        createMegamanClimb();
+        createJumpAnimation();
+        createClimbAnimation();
         createStandShootTexture();
         createRunShootAnimation();
-        createJumpShoot();
+        createJumpShootAnimation();
 
         setBounds(0, 0, START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
     }
@@ -82,7 +82,7 @@ public class Megaman extends Sprite {
         megamanRunShoot = new Animation<TextureRegion>(0.077f, frames);
     }
 
-    private void createJumpShoot() {
+    private void createJumpShootAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
 
         TextureRegion jumpShoot = new TextureRegion(playScreen.getAtlas().findRegion("Jump_shoot"));
@@ -106,11 +106,11 @@ public class Megaman extends Sprite {
         megamanStandShoot = new Animation<TextureRegion>(0.2f, frames);
     }
 
-    private void createMegamanJump() {
+    private void createJumpAnimation() {
         megamanJump = new TextureRegion(playScreen.getAtlas().findRegion("Jump"));
     }
 
-    private void createMegamanClimb() {
+    private void createClimbAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
         for (int i = 1; i <= 2; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Climb" + i)));

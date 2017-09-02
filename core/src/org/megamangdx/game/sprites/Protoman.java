@@ -10,12 +10,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.ObjectState;
+import org.megamangdx.game.screens.PlayScreen;
 
 /**
  * @author Lam
  */
 public class Protoman extends Sprite implements Telegraph {
+
+    private static final float START_POSX = 24;
+    private static final float START_POSY = 24;
 
     private ObjectState prevState;
     private ObjectState currentState;
@@ -26,11 +31,12 @@ public class Protoman extends Sprite implements Telegraph {
     private Animation<TextureRegion> protomanStandShoot;
     private Animation<TextureRegion> protomanRun;
     private Animation<TextureRegion> protomanRunShoot;
+    private Animation<TextureRegion> protomanJumpShoot;
+
 
     private TextureRegion protomanJump;
-    private TextureRegion protomanJumpShoot;
 
-    private boolean rightDirection = false;
+    private boolean rightDirection;
 
     private boolean isDead = false;
     private boolean isShooting = false;
@@ -38,6 +44,67 @@ public class Protoman extends Sprite implements Telegraph {
     private Array<Bullet> gunShots = new Array<Bullet>();
 
     private float stateTimer;
+
+    private PlayScreen playScreen;
+
+
+    public Protoman(PlayScreen playScreen) {
+        this.playScreen = playScreen;
+        world = playScreen.getWorld();
+        rightDirection = false;
+
+        createProtomanModel();
+
+        createStandAnimation();
+        createRunAnimation();
+        createJumpAnimation();
+        createJumpShootAnimation();
+        createRunShootAnimation();
+
+        setBounds(0, 0, START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
+    }
+
+    private void createRunShootAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i = 0; i <= 2; i++) {
+            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("protoman_run_shoot" + i)));
+        }
+        protomanRunShoot = new Animation<TextureRegion>(0.077f, frames);
+    }
+
+    private void createJumpShootAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+
+        TextureRegion jumpShoot = new TextureRegion(playScreen.getAtlas().findRegion("protoman_jump_shoot"));
+        frames.add(jumpShoot);
+        frames.add(jumpShoot);
+        protomanJumpShoot = new Animation<TextureRegion>(0.4f, frames);
+    }
+
+    private void createJumpAnimation() {
+        protomanJump = new TextureRegion(playScreen.getAtlas().findRegion("protoman_jump"));
+    }
+
+    private void createRunAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i = 0; i <= 2; i++) {
+            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("protoman_run" + i)));
+        }
+        protomanRun = new Animation<TextureRegion>(0.087f, frames);
+    }
+
+    private void createStandAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i = 0; i <= 2; i++) {
+            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("protoman_stand" + i)));
+        }
+        protomanStand = new Animation<TextureRegion>(0.2f, frames);
+    }
+
+    private void createProtomanModel() {
+
+    }
+
 
     /**
      * Handle incoming messages from Telegram.
