@@ -19,6 +19,7 @@ import lombok.Data;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.scenes.Hud;
 import org.megamangdx.game.sprites.Megaman;
+import org.megamangdx.game.sprites.Protoman;
 import org.megamangdx.game.utils.B2WorldCreator;
 
 /**
@@ -38,7 +39,9 @@ public class PlayScreen implements Screen {
 
     private TextureAtlas atlas;
     private World world;
+
     private Megaman player;
+    private Protoman protoman;
 
     // Tiled map
     private TmxMapLoader mapLoader;
@@ -77,8 +80,11 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0, -10), true);
         //debugRenderer.SHAPE_STATIC.set(1,0,0,1);
 
-        player = new Megaman(this);
         b2WorldCreator = new B2WorldCreator(this);
+
+        player = new Megaman(this);
+        protoman = new Protoman(this);
+
     }
 
     @Override
@@ -86,18 +92,29 @@ public class PlayScreen implements Screen {
 
     }
 
+    public void loadMap(String mapname) {
+        this.map = mapLoader.load(mapname);
+        float unitScale = 1 / MegamanGame.PPM;
+
+        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+        gameCamera.position.set(viewport.getWorldWidth() / 2,
+                viewport.getWorldHeight() / 2, 0);
+    }
+
     private void handleInput() {
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.getLinearVelocity().x <= Megaman.MAX_VELOCITY) {
-            player.moveRight();
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.getLinearVelocity().x >= -Megaman.MAX_VELOCITY) {
-            player.moveLeft();
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT) && player.getLinearVelocity().y == 0) {
-            player.jump();
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
-            player.shoot();
+        if (player.isReady()) {
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.getLinearVelocity().x <= Megaman.MAX_VELOCITY) {
+                player.moveRight();
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.getLinearVelocity().x >= -Megaman.MAX_VELOCITY) {
+                player.moveLeft();
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT) && player.getLinearVelocity().y == 0) {
+                player.jump();
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
+                player.shoot();
+            }
         }
     }
 
@@ -120,6 +137,8 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         // drawplayer
         player.draw(game.batch);
+        protoman.draw(game.batch);
+
         // TODO draw enemies etc.
         game.batch.end();
 
@@ -133,6 +152,8 @@ public class PlayScreen implements Screen {
         world.step(1 / 60f, 6, 2);
 
         player.update(delta);
+        protoman.update(delta);
+
         hud.update(delta);
 
 //        if (player.getCurrentState() != ObjectState.DEAD) {

@@ -20,14 +20,17 @@ import org.megamangdx.game.screens.PlayScreen;
 public class Megaman extends Sprite {
 
     public static final float MAX_VELOCITY = 1.2f;
-    public static final int START_POSX = 24;
-    public static final int START_POSY = 24;
+    public static final int START_POSX = 40;
+
+    public static final int START_POSY = 350;
 
     private ObjectState prevState = ObjectState.STANDING;
     private ObjectState currentState = ObjectState.STANDING;
 
     public World world;
     public Body b2body;
+
+    public Spawn spawn;
 
     private Animation<TextureRegion> megamanRun;
     private Animation<TextureRegion> megamanStand;
@@ -49,12 +52,12 @@ public class Megaman extends Sprite {
     private float stateTimer = 0;
 
     public Megaman(PlayScreen playScreen) {
-        world = playScreen.getWorld();
+        this.world = playScreen.getWorld();
         this.playScreen = playScreen;
         this.rightDirection = true;
 
         createMegamanModel();
-
+        createSpawnAnimation();
         createStandAnimation();
         createRunAnimation();
         createJumpAnimation();
@@ -63,7 +66,17 @@ public class Megaman extends Sprite {
         createRunShootAnimation();
         createJumpShootAnimation();
 
-        setBounds(0, 0, START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
+        setBounds(0, 0, 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+    }
+
+    private void createSpawnAnimation() {
+        this.spawn = new Spawn();
+        spawn.loadBeamTexture(new TextureRegion(playScreen.getAtlas().findRegion("Spawn0")));
+        Array<TextureRegion> materializedFrames = new Array<TextureRegion>();
+        for (int i = 1; i <= 2; i++) {
+            materializedFrames.add(new TextureRegion(playScreen.getAtlas().findRegion("Spawn" + i)));
+        }
+        spawn.loadLandingAnimation(materializedFrames, 0.30f);
     }
 
     private void createRunAnimation() {
@@ -206,6 +219,17 @@ public class Megaman extends Sprite {
     }
 
     private ObjectState getState() {
+        if (!spawn.isSpawnFinished()) {
+            // if megaman is landing
+            if (getLinearVelocity().y == 0) {
+                spawn.setLanded();
+            }
+            if (!spawn.isLanded()) {
+                return ObjectState.BEAM;
+            }
+            return ObjectState.MATERIALIZED_BEAM;
+        }
+
         if (isDead) {
             return  ObjectState.DEAD;
         }
@@ -237,9 +261,16 @@ public class Megaman extends Sprite {
         currentState = getState();
         TextureRegion textureRegion = null;
         // reset sprite size and position
-        setBounds(getX(), getY(), START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
-
+        setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
         switch (currentState) {
+            case BEAM:
+                setBounds(getX(), getY(), 12 / MegamanGame.PPM, 32 / MegamanGame.PPM);
+                textureRegion = spawn.getBeamTexture();
+                break;
+            case MATERIALIZED_BEAM:
+                setBounds(getX(), getY(), 22 / MegamanGame.PPM, 20 / MegamanGame.PPM);
+                textureRegion = spawn.getLandingAnimation().getKeyFrame(stateTimer);
+                break;
             case DEAD:
                 // TODO implement dead textures
                 break;
@@ -271,6 +302,10 @@ public class Megaman extends Sprite {
                 setBounds(getX(), getY(), 27 / MegamanGame.PPM, 32 / MegamanGame.PPM);
                 textureRegion = megamanJump;
                 break;
+        }
+        // check if megaman is landing when beam
+        if (spawn.getLandingAnimation().isAnimationFinished(stateTimer) && !spawn.isSpawnFinished()) {
+            spawn.finishSpawn();
         }
 
         // flip sprite, depends on direction
@@ -309,4 +344,7 @@ public class Megaman extends Sprite {
         }
     }
 
+    public boolean isReady() {
+        return spawn.isSpawnFinished();
+    }
 }

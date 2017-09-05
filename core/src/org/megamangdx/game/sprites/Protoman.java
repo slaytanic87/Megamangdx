@@ -7,20 +7,21 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.ObjectState;
 import org.megamangdx.game.screens.PlayScreen;
+
+import static org.megamangdx.game.ObjectState.*;
 
 /**
  * @author Lam
  */
 public class Protoman extends Sprite implements Telegraph {
 
-    private static final float START_POSX = 24;
-    private static final float START_POSY = 24;
+    private static final float START_POSX = 350;
+    private static final float START_POSY = 350;
 
     private ObjectState prevState;
     private ObjectState currentState;
@@ -32,7 +33,6 @@ public class Protoman extends Sprite implements Telegraph {
     private Animation<TextureRegion> protomanRun;
     private Animation<TextureRegion> protomanRunShoot;
     private Animation<TextureRegion> protomanJumpShoot;
-
 
     private TextureRegion protomanJump;
 
@@ -46,7 +46,7 @@ public class Protoman extends Sprite implements Telegraph {
     private float stateTimer;
 
     private PlayScreen playScreen;
-
+    private Spawn spawn;
 
     public Protoman(PlayScreen playScreen) {
         this.playScreen = playScreen;
@@ -54,14 +54,31 @@ public class Protoman extends Sprite implements Telegraph {
         rightDirection = false;
 
         createProtomanModel();
-
+        createSpawnAnimation();
         createStandAnimation();
+        createStandShoot();
         createRunAnimation();
         createJumpAnimation();
         createJumpShootAnimation();
         createRunShootAnimation();
 
-        setBounds(0, 0, START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
+        setBounds(0, 0, 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+    }
+
+    private void createSpawnAnimation() {
+        this.spawn = new Spawn();
+        spawn.loadBeamTexture(new TextureRegion(playScreen.getAtlas().findRegion("protoman_spawn0")));
+        Array<TextureRegion> materializedFrames = new Array<TextureRegion>();
+        for (int i = 1; i <= 2; i++) {
+            materializedFrames.add(new TextureRegion(playScreen.getAtlas().findRegion("protoman_spawn" + i)));
+        }
+        spawn.loadLandingAnimation(materializedFrames, 0.30f);
+    }
+
+    private void createStandShoot() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("protoman_stand_shoot")));
+        protomanStandShoot = new Animation<TextureRegion>(0.2f, frames);
     }
 
     private void createRunShootAnimation() {
@@ -102,9 +119,36 @@ public class Protoman extends Sprite implements Telegraph {
     }
 
     private void createProtomanModel() {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.position.set(START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        b2body = world.createBody(bodyDef);
 
+        // A fixture has a shape, density, friction and restitution attached to it
+        FixtureDef fixtureDef = new FixtureDef();
+        CircleShape shape = new CircleShape();
+        shape.setRadius(12 / MegamanGame.PPM);
+
+        //TODO Filter collision categories
+
+        fixtureDef.shape = shape;
+        // set Spritedata
+        b2body.createFixture(fixtureDef).setUserData(this);
     }
 
+    public void shoot() {
+        isShooting = true;
+        gunShots.add(new Bullet(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
+                Bullet.WeaponType.NORMAL));
+        // if the player is in the air and shoot button was hit
+        if (currentState == ObjectState.JUMPING || currentState == ObjectState.FALLING) {
+            currentState = JUMPING_SHOOT;
+        }
+    }
+
+    public void die() {
+        this.isDead = true;
+    }
 
     /**
      * Handle incoming messages from Telegram.
@@ -119,7 +163,6 @@ public class Protoman extends Sprite implements Telegraph {
 
     public void moveLeft() {
         b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
-
     }
 
     public void moveRight() {
@@ -127,45 +170,143 @@ public class Protoman extends Sprite implements Telegraph {
     }
 
     public void jump() {
-        if (currentState != ObjectState.JUMPING) {
-            b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
-            currentState = ObjectState.JUMPING;
+        if (!isShooting) {
+            if (currentState != ObjectState.JUMPING) {
+                b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
+                currentState = ObjectState.JUMPING;
+            }
+        } else {
+            if (currentState != ObjectState.JUMPING_SHOOT) {
+                b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
+                currentState = ObjectState.JUMPING_SHOOT;
+            }
         }
+    }
+
+    public Vector2 getLinearVelocity() {
+        return b2body.getLinearVelocity();
     }
 
     private ObjectState getState() {
-        if (isDead) {
-            return ObjectState.DEAD;
+        if (!spawn.isSpawnFinished()) {
+            if (getLinearVelocity().y == 0) {
+                spawn.setLanded();
+            }
+            if (!spawn.isLanded()) {
+                return BEAM;
+            }
+            return MATERIALIZED_BEAM;
         }
-        return ObjectState.STANDING;
+        if (isDead) {
+            return DEAD;
+        }
+        if (!isShooting) {
+            if ((getLinearVelocity().y > 0 && currentState == ObjectState.JUMPING)
+                    || (getLinearVelocity().y < 0 && prevState == ObjectState.JUMPING)) {
+                return ObjectState.JUMPING;
+            }
+            if (getLinearVelocity().y < 0) {
+                return ObjectState.FALLING;
+            }
+            if (getLinearVelocity().x != 0) {
+                return ObjectState.RUNNING;
+            }
+            return ObjectState.STANDING;
+        } else {
+            if ((getLinearVelocity().y > 0 && currentState == ObjectState.JUMPING_SHOOT)
+                    || (getLinearVelocity().y < 0 && prevState == ObjectState.JUMPING_SHOOT)) {
+                return JUMPING_SHOOT;
+            }
+            if (getLinearVelocity().x != 0) {
+                return ObjectState.RUNNING_SHOOT;
+            }
+            return ObjectState.STANDING_SHOOT;
+        }
     }
 
     private TextureRegion getFrame(float delta) {
-        ObjectState state = getState();
+        currentState = getState();
         TextureRegion textureRegion = null;
-        switch (state) {
+        switch (currentState) {
+            case BEAM:
+                setBounds(getX(), getY(), 7 / MegamanGame.PPM, 32 / MegamanGame.PPM);
+                textureRegion = spawn.getBeamTexture();
+                break;
+            case MATERIALIZED_BEAM:
+                setBounds(getX(), getY(), 22 / MegamanGame.PPM, 19 / MegamanGame.PPM);
+                textureRegion = spawn.getLandingAnimation().getKeyFrame(stateTimer);
+                break;
             case DEAD:
                 // TODO sprite
                 break;
             case RUNNING:
+                setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+                textureRegion = protomanRun.getKeyFrame(stateTimer, true);
+                break;
+            case RUNNING_SHOOT:
+                setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+                textureRegion = protomanRunShoot.getKeyFrame(stateTimer, true);
                 break;
             case JUMPING_SHOOT:
+                setBounds(getX(), getY(), 30 / MegamanGame.PPM, 30 / MegamanGame.PPM);
+                textureRegion = protomanJumpShoot.getKeyFrame(stateTimer, true);
                 break;
             case STANDING:
+                setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+                textureRegion = protomanStand.getKeyFrame(stateTimer, true);
+                break;
+            case STANDING_SHOOT:
+                setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+                textureRegion = protomanStandShoot.getKeyFrame(stateTimer, true);
                 break;
             case FALLING:
             case JUMPING:
             default:
+                setBounds(getX(), getY(), 27 / MegamanGame.PPM, 30 / MegamanGame.PPM);
+                textureRegion = protomanJump;
                 break;
         }
+
+        // check if protoman is landing when beam
+        if (spawn.getLandingAnimation().isAnimationFinished(stateTimer) && !spawn.isSpawnFinished()) {
+            spawn.finishSpawn();
+        }
+
+        // flip sprite, depends on direction
+        if ((getLinearVelocity().x < 0 || !rightDirection) && textureRegion.isFlipX()) {
+            textureRegion.flip(true, false);
+            rightDirection = false;
+        } else if ((getLinearVelocity().x > 0 || rightDirection) && !textureRegion.isFlipX()) {
+            textureRegion.flip(true, false);
+            rightDirection = true;
+        }
+
+        // reset shoot state if animation is over
+        if (protomanStandShoot.isAnimationFinished(stateTimer) && protomanRunShoot.isAnimationFinished(stateTimer)
+                && protomanJumpShoot.isAnimationFinished(stateTimer)) {
+            isShooting = false;
+        }
+
+        // reset shoot state if the state is changing from shooting mode to not shooting mode
+        if ((prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.STANDING_SHOOT)
+                || (prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.RUNNING_SHOOT)) {
+            isShooting = false;
+        }
+
+        stateTimer = (prevState == currentState) ? stateTimer + delta : 0;
+        prevState = currentState;
 
         return textureRegion;
     }
 
     public void update(float delta) {
+        setPosition(b2body.getPosition().x - getWidth() / 2,
+                b2body.getPosition().y - getHeight() / 2);
 
+        setRegion(getFrame(delta));
         // remove destroyed gunshots from memory
         for (Bullet bullet: gunShots) {
+            bullet.update(delta);
             if (bullet.isDestroyed()) {
                 gunShots.removeValue(bullet, true);
             }
@@ -180,4 +321,7 @@ public class Protoman extends Sprite implements Telegraph {
         }
     }
 
+    public boolean isReady() {
+        return spawn.isSpawnFinished();
+    }
 }

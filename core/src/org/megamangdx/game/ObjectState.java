@@ -5,6 +5,8 @@ package org.megamangdx.game;
  */
 public enum ObjectState {
 
+    BEAM,
+    MATERIALIZED_BEAM,
     JUMPING,
     JUMPING_SHOOT,
     FALLING,
