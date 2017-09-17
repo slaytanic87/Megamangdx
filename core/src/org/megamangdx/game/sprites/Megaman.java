@@ -10,8 +10,11 @@ import com.badlogic.gdx.utils.Array;
 import lombok.Data;
 import lombok.Setter;
 import org.megamangdx.game.MegamanGame;
-import org.megamangdx.game.ObjectState;
 import org.megamangdx.game.screens.PlayScreen;
+import org.megamangdx.game.sprites.effects.Bullet;
+import org.megamangdx.game.sprites.effects.Explosion;
+import org.megamangdx.game.sprites.effects.Spawn;
+import org.megamangdx.game.utils.Utils;
 
 /**
  * @author Lam on 12.08.17.
@@ -43,6 +46,8 @@ public class Megaman extends Sprite {
 
     private Array<Bullet> gunShots = new Array<Bullet>();
 
+    private Array<Explosion> explosions = new Array<Explosion>();
+
     private PlayScreen playScreen;
 
     private boolean rightDirection;
@@ -65,8 +70,15 @@ public class Megaman extends Sprite {
         createStandShootTexture();
         createRunShootAnimation();
         createJumpShootAnimation();
-
         setBounds(0, 0, 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+    }
+
+    private void createExplosions() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i = 1; i <= 4; i++) {
+            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Explosion" + i)));
+        }
+        explosions = Utils.createExplosionEffect(world, b2body, frames);
     }
 
     private void createSpawnAnimation() {
@@ -164,12 +176,18 @@ public class Megaman extends Sprite {
 
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
 
-        setRegion(getFrame(delta));
-        // delete Gun shoot
-        for (Bullet shoot : gunShots) {
-            shoot.update(delta);
-            if (shoot.isDestroyed()) {
-                gunShots.removeValue(shoot, true);
+        if (!isDead()) {
+            setRegion(getFrame(delta));
+            // delete Gun shoot
+            for (Bullet shoot : gunShots) {
+                shoot.update(delta);
+                if (shoot.isDestroyed()) {
+                    gunShots.removeValue(shoot, true);
+                }
+            }
+        } else {
+            for (Explosion explosion : explosions) {
+                explosion.update(delta);
             }
         }
     }
@@ -183,7 +201,11 @@ public class Megaman extends Sprite {
     }
 
     public void die() {
-        this.isDead = true;
+        if (!isDead()) {
+            this.isDead = true;
+            world.destroyBody(b2body);
+            createExplosions();
+        }
     }
 
     public void jump() {
@@ -261,7 +283,6 @@ public class Megaman extends Sprite {
         currentState = getState();
         TextureRegion textureRegion = null;
         // reset sprite size and position
-        setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
         switch (currentState) {
             case BEAM:
                 setBounds(getX(), getY(), 12 / MegamanGame.PPM, 32 / MegamanGame.PPM);
@@ -275,12 +296,15 @@ public class Megaman extends Sprite {
                 // TODO implement dead textures
                 break;
             case RUNNING:
+                setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
                 textureRegion = megamanRun.getKeyFrame(stateTimer, true);
                 break;
             case CLIMBING:
+                setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
                 textureRegion = megamanClimb.getKeyFrame(stateTimer, true);
                 break;
             case STANDING:
+                setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
                 textureRegion = megamanStand.getKeyFrame(stateTimer, true);
                 break;
             case RUNNING_SHOOT:
@@ -341,6 +365,9 @@ public class Megaman extends Sprite {
 
         for (Bullet shoot: gunShots) {
             shoot.draw(batch);
+        }
+        for (Explosion effect: explosions) {
+            effect.draw(batch);
         }
     }
 

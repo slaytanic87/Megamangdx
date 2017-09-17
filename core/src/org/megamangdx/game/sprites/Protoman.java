@@ -10,10 +10,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import org.megamangdx.game.MegamanGame;
-import org.megamangdx.game.ObjectState;
 import org.megamangdx.game.screens.PlayScreen;
+import org.megamangdx.game.sprites.effects.Bullet;
+import org.megamangdx.game.sprites.effects.Spawn;
 
-import static org.megamangdx.game.ObjectState.*;
+import static org.megamangdx.game.sprites.ObjectState.*;
 
 /**
  * @author Lam

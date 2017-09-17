@@ -14,6 +14,9 @@ public class MegamanGame extends Game {
 	// Collision classes as bits
 	public static final short PLAYER_BIT = 1;
 	public static final short ENEMY_BIT = 2;
+	public static final short WALL_BIT = 4;
+	public static final short GROUND_BIT = 8;
+	public static final short PLATFORM_BIT = 16;
 
 	@Override
 	public void create () {

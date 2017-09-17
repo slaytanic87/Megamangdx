@@ -1,4 +1,4 @@
-package org.megamangdx.game.sprites;
+package org.megamangdx.game.sprites.effects;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,24 +22,24 @@ public class Spawn {
     @Getter
     private boolean spawnFinished;
 
-    Spawn() {
+    public Spawn() {
         this.landed = false;
         this.spawnFinished = false;
     }
 
-    void loadLandingAnimation(Array<TextureRegion> frames, float duration) {
+    public void loadLandingAnimation(Array<TextureRegion> frames, float duration) {
         this.landingAnimation = new Animation<TextureRegion>(duration, frames);
     }
 
-    void loadBeamTexture(TextureRegion beamTexture) {
+    public void loadBeamTexture(TextureRegion beamTexture) {
         this.beamTexture = beamTexture;
     }
 
-    void finishSpawn() {
+    public void finishSpawn() {
         this.spawnFinished = true;
     }
 
-    void setLanded() {
+    public void setLanded() {
         this.landed = true;
     }
 }

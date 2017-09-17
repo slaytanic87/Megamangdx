@@ -65,41 +65,31 @@ public class PlayScreen implements Screen {
 
         // load map and setup map renderer
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("Stage.tmx");
-
-        //tells the renderer how many pixels map to a single world unit
-        float unitScale = 1 / MegamanGame.PPM;
-        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
-        gameCamera.position.set(viewport.getWorldWidth() / 2,
-                viewport.getWorldHeight() / 2, 0);
-
-        // create HUD Scores
-        hud = new Hud(game.batch);
-
-        //create our Box2D world, setting no gravity in X, -10 gravity in Y, and allow bodies to sleep
-        world = new World(new Vector2(0, -10), true);
-        //debugRenderer.SHAPE_STATIC.set(1,0,0,1);
-
-        b2WorldCreator = new B2WorldCreator(this);
+        loadNewMap("Stage.tmx");
 
         player = new Megaman(this);
         protoman = new Protoman(this);
-
+        // create HUD Scores
+        hud = new Hud(game.batch);
     }
+
+    public void loadNewMap(String fileName) {
+        map = mapLoader.load(fileName);
+        world = new World(new Vector2(0, -10), true);
+        float unitScale = 1 / MegamanGame.PPM;
+
+        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+        gameCamera.position.set(viewport.getWorldWidth() / 2,
+                viewport.getWorldHeight() / 2, 0);
+        b2WorldCreator = new B2WorldCreator(world, map);
+    }
+
 
     @Override
     public void show() {
 
     }
 
-    public void loadMap(String mapname) {
-        this.map = mapLoader.load(mapname);
-        float unitScale = 1 / MegamanGame.PPM;
-
-        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
-        gameCamera.position.set(viewport.getWorldWidth() / 2,
-                viewport.getWorldHeight() / 2, 0);
-    }
 
     private void handleInput() {
         if (player.isReady()) {
@@ -114,6 +104,9 @@ public class PlayScreen implements Screen {
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
                 player.shoot();
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+                player.die();
             }
         }
     }

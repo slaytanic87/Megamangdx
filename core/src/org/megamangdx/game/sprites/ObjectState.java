@@ -1,4 +1,4 @@
-package org.megamangdx.game;
+package org.megamangdx.game.sprites;
 
 /**
  * @author Lam on 12.08.17.

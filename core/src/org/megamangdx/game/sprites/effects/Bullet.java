@@ -1,4 +1,4 @@
-package org.megamangdx.game.sprites;
+package org.megamangdx.game.sprites.effects;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -33,7 +33,29 @@ public class Bullet extends Sprite {
     private boolean destroyed;
     private boolean setToDestroy;
 
+    /**
+     * Constructor with no gravity.
+     * @param playScreen
+     * @param x
+     * @param y
+     * @param rightDirection
+     * @param weaponType
+     */
     public Bullet(PlayScreen playScreen, float x, float y, boolean rightDirection, WeaponType weaponType) {
+        this(playScreen, x, y, rightDirection, weaponType, 0);
+    }
+
+    /**
+     * Constructor with specified gravity.
+     * @param playScreen
+     * @param x
+     * @param y
+     * @param rightDirection
+     * @param weaponType
+     * @param gravity gravity scale
+     */
+    public Bullet(PlayScreen playScreen, float x, float y, boolean rightDirection, WeaponType weaponType,
+                  float gravity) {
         screen = playScreen;
         world = playScreen.getWorld();
         this.rightDirection = rightDirection;
@@ -48,10 +70,10 @@ public class Bullet extends Sprite {
         setRegion(fireAnimation.getKeyFrame(0));
         setBounds(x, y, 12 / MegamanGame.PPM, 10 / MegamanGame.PPM);
 
-        createWeapon();
+        createBullet(gravity);
     }
 
-    public void createWeapon() {
+    public void createBullet(float gravity) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.position.set(rightDirection ? getX() + 12 / MegamanGame.PPM : getX() - 12 / MegamanGame.PPM, getY());
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -60,7 +82,7 @@ public class Bullet extends Sprite {
             b2body = world.createBody(bodyDef);
         }
         // no gravity
-        b2body.setGravityScale(0);
+        b2body.setGravityScale(gravity);
         FixtureDef fixtureDef = new FixtureDef();
         CircleShape shape = new CircleShape();
         shape.setRadius(3 / MegamanGame.PPM);
@@ -86,6 +108,7 @@ public class Bullet extends Sprite {
             destroyed = true;
         }
 
+        // destroy bullet on the next iteration
         if ((rightDirection && b2body.getLinearVelocity().x < 0) ||
                 (!rightDirection && b2body.getLinearVelocity().x > 0)) {
             setToDestroy();
