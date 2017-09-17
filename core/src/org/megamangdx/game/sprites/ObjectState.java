@@ -14,6 +14,7 @@ public enum ObjectState {
     RUNNING_SHOOT,
     CLIMBING,
     DEAD,
+    HIT,
     STANDING,
     STANDING_SHOOT;
 

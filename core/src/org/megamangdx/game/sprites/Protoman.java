@@ -73,7 +73,7 @@ public class Protoman extends Sprite implements Telegraph {
         for (int i = 1; i <= 2; i++) {
             materializedFrames.add(new TextureRegion(playScreen.getAtlas().findRegion("protoman_spawn" + i)));
         }
-        spawn.loadLandingAnimation(materializedFrames, 0.30f);
+        spawn.loadLandingAnimation(materializedFrames, 0.25f);
     }
 
     private void createStandShoot() {
@@ -237,6 +237,7 @@ public class Protoman extends Sprite implements Telegraph {
                 setBounds(getX(), getY(), 22 / MegamanGame.PPM, 19 / MegamanGame.PPM);
                 textureRegion = spawn.getLandingAnimation().getKeyFrame(stateTimer);
                 break;
+            case HIT:
             case DEAD:
                 // TODO sprite
                 break;

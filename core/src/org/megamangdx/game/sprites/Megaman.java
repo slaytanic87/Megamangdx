@@ -88,7 +88,7 @@ public class Megaman extends Sprite {
         for (int i = 1; i <= 2; i++) {
             materializedFrames.add(new TextureRegion(playScreen.getAtlas().findRegion("Spawn" + i)));
         }
-        spawn.loadLandingAnimation(materializedFrames, 0.30f);
+        spawn.loadLandingAnimation(materializedFrames, 0.25f);
     }
 
     private void createRunAnimation() {
@@ -292,6 +292,7 @@ public class Megaman extends Sprite {
                 setBounds(getX(), getY(), 22 / MegamanGame.PPM, 20 / MegamanGame.PPM);
                 textureRegion = spawn.getLandingAnimation().getKeyFrame(stateTimer);
                 break;
+            case HIT:
             case DEAD:
                 // TODO implement dead textures
                 break;
@@ -357,6 +358,20 @@ public class Megaman extends Sprite {
         prevState = currentState;
 
         return textureRegion;
+    }
+
+
+    private boolean isShootState(ObjectState currentState) {
+        boolean afterShoot = false;
+        switch (currentState) {
+            case JUMPING_SHOOT:
+            case RUNNING_SHOOT:
+            case STANDING_SHOOT:
+                afterShoot = true;
+                break;
+            default:
+        }
+        return afterShoot;
     }
 
     @Override
