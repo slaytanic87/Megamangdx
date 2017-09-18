@@ -22,16 +22,16 @@ public class B2WorldCreator {
         this.map = map;
 
         //create ground bodies/fixtures
-        createBoundaryBoxWithBody("ground");
+        createBoundaryBoxWithBody("ground", MegamanGame.GROUND_BIT);
         //create platform bodies/fixtures
-        createBoundaryBoxWithBody("platform");
+        createBoundaryBoxWithBody("platform", MegamanGame.PLATFORM_BIT);
         //create wall bodies/fixtures
-        createBoundaryBoxWithBody("wall");
+        createBoundaryBoxWithBody("wall", MegamanGame.WALL_BIT);
 
     }
 
 
-    public void createBoundaryBoxWithBody(String name) {
+    public void createBoundaryBoxWithBody(String name, Short categorieBit) {
         //create body and fixture variables
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -53,6 +53,9 @@ public class B2WorldCreator {
 
                 shape.setAsBox(rect.getWidth() / 2 / MegamanGame.PPM, rect.getHeight() / 2 / MegamanGame.PPM);
                 fdef.shape = shape;
+                if (categorieBit != null) {
+                    fdef.filter.categoryBits = categorieBit;
+                }
                 body.createFixture(fdef);
             }
         }

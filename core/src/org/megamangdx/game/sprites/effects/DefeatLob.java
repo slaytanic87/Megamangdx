@@ -11,19 +11,19 @@ import org.megamangdx.game.MegamanGame;
 /**
  * @author Lam, Le (msg systems ag) 2017
  */
-public class Explosion extends Sprite {
+public class DefeatLob extends Sprite {
 
     private World world;
     private Body b2body;
-    private Animation<TextureRegion> explodeAnimation;
+    private Animation<TextureRegion> lobAnimation;
     private float stateTime = 0;
 
-    public Explosion(World world, Body b2body, float x, float y, Array<TextureRegion> frames, Vector2 direction,
+    public DefeatLob(World world, Body b2body, float x, float y, Array<TextureRegion> frames, Vector2 direction,
                      float duration) {
         this.world = world;
         this.b2body = b2body;
-        this.explodeAnimation = new Animation<TextureRegion>(duration,  frames);
-        setRegion(explodeAnimation.getKeyFrame(0));
+        this.lobAnimation = new Animation<TextureRegion>(duration,  frames);
+        setRegion(lobAnimation.getKeyFrame(0));
         setBounds(x, y, frames.get(0).getRegionWidth() / MegamanGame.PPM,
                 frames.get(0).getRegionHeight() / MegamanGame.PPM);
         createExplosionModel(direction);
@@ -45,9 +45,9 @@ public class Explosion extends Sprite {
         CircleShape shape = new CircleShape();
         shape.setRadius(3 / MegamanGame.PPM);
 
-        // TODO collisions
-        // fixtureDef.filter.categoryBits = .FIRE_BIT;
-        // fixtureDef.filter.maskBits
+        // collide with nothing
+        fixtureDef.filter.maskBits = MegamanGame.NOTHING_BIT;
+
         fixtureDef.shape = shape;
         fixtureDef.restitution = 1;
         fixtureDef.friction = 0;
@@ -59,7 +59,7 @@ public class Explosion extends Sprite {
     public void update(float delta) {
         stateTime += delta;
 
-        TextureRegion textureRegion = explodeAnimation.getKeyFrame(stateTime, true);
+        TextureRegion textureRegion = lobAnimation.getKeyFrame(stateTime, true);
         setRegion(textureRegion);
 
         setBounds(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2,

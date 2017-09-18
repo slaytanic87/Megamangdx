@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import lombok.Data;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.screens.PlayScreen;
 import org.megamangdx.game.sprites.effects.Bullet;
@@ -19,6 +20,7 @@ import static org.megamangdx.game.sprites.ObjectState.*;
 /**
  * @author Lam
  */
+@Data
 public class Protoman extends Sprite implements Telegraph {
 
     private static final float START_POSX = 350;
@@ -34,6 +36,7 @@ public class Protoman extends Sprite implements Telegraph {
     private Animation<TextureRegion> protomanRun;
     private Animation<TextureRegion> protomanRunShoot;
     private Animation<TextureRegion> protomanJumpShoot;
+    private Animation<TextureRegion> protomanHit;
 
     private TextureRegion protomanJump;
 
@@ -61,9 +64,17 @@ public class Protoman extends Sprite implements Telegraph {
         createRunAnimation();
         createJumpAnimation();
         createJumpShootAnimation();
+        createHitAnimation();
         createRunShootAnimation();
 
         setBounds(0, 0, 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+    }
+
+    private void createHitAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("protoman_hit")));
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("damage")));
+        protomanHit = new Animation<TextureRegion>(0.8f, frames);
     }
 
     private void createSpawnAnimation() {
@@ -131,6 +142,9 @@ public class Protoman extends Sprite implements Telegraph {
         shape.setRadius(12 / MegamanGame.PPM);
 
         //TODO Filter collision categories
+        fixtureDef.filter.categoryBits = MegamanGame.ENEMY_BIT;
+        fixtureDef.filter.maskBits = MegamanGame.GROUND_BIT | MegamanGame.PLATFORM_BIT
+                | MegamanGame.PLAYER_BIT | MegamanGame.WALL_BIT | MegamanGame.BULLET_BIT;
 
         fixtureDef.shape = shape;
         // set Spritedata
@@ -239,7 +253,8 @@ public class Protoman extends Sprite implements Telegraph {
                 break;
             case HIT:
             case DEAD:
-                // TODO sprite
+                setBounds(getX(), getY(), 30 / MegamanGame.PPM, 30 / MegamanGame.PPM);
+                textureRegion = protomanHit.getKeyFrame(stateTimer, true);
                 break;
             case RUNNING:
                 setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
@@ -315,15 +330,17 @@ public class Protoman extends Sprite implements Telegraph {
         }
     }
 
+    @Override
     public void draw(Batch batch) {
-        super.draw(batch);
-
+        if (!isDead) {
+            super.draw(batch);
+        }
         for (Bullet shoot: gunShots) {
             shoot.draw(batch);
         }
     }
 
     public boolean isReady() {
-        return spawn.isSpawnFinished();
+        return spawn.isSpawnFinished() && !isDead();
     }
 }

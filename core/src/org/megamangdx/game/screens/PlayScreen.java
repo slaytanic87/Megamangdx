@@ -3,6 +3,7 @@ package org.megamangdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -49,6 +50,8 @@ public class PlayScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
 
     private B2WorldCreator b2WorldCreator;
+
+    private Music music;
 
     public PlayScreen(MegamanGame game) {
         this.game = game;
@@ -108,6 +111,9 @@ public class PlayScreen implements Screen {
             if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
                 player.die();
             }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+                player.hit();
+            }
         }
     }
 
@@ -123,7 +129,7 @@ public class PlayScreen implements Screen {
         // render the map
         renderer.render();
 
-        // render Bo2DDebugLines
+        // render Bo2DDebugLines (game model)
         debugRenderer.render(world, gameCamera.combined);
         // tell game batch to recognize where the camera is in the game world
         game.batch.setProjectionMatrix(gameCamera.combined);

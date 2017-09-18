@@ -88,8 +88,8 @@ public class Bullet extends Sprite {
         shape.setRadius(3 / MegamanGame.PPM);
 
         // TODO collisions
-        // fixtureDef.filter.categoryBits = .FIRE_BIT;
-        // fixtureDef.filter.maskBits
+        fixtureDef.filter.categoryBits = MegamanGame.BULLET_BIT;
+        //fixtureDef.filter.maskBits = ;
         fixtureDef.shape = shape;
         fixtureDef.restitution = 1;
         fixtureDef.friction = 0;

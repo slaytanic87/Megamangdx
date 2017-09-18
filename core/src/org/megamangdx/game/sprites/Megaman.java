@@ -1,5 +1,6 @@
 package org.megamangdx.game.sprites;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,13 +9,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import lombok.Data;
-import lombok.Setter;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.screens.PlayScreen;
 import org.megamangdx.game.sprites.effects.Bullet;
-import org.megamangdx.game.sprites.effects.Explosion;
+import org.megamangdx.game.sprites.effects.DefeatLob;
 import org.megamangdx.game.sprites.effects.Spawn;
-import org.megamangdx.game.utils.Utils;
+import org.megamangdx.game.utils.EffectUtils;
 
 /**
  * @author Lam on 12.08.17.
@@ -24,7 +24,6 @@ public class Megaman extends Sprite {
 
     public static final float MAX_VELOCITY = 1.2f;
     public static final int START_POSX = 40;
-
     public static final int START_POSY = 350;
 
     private ObjectState prevState = ObjectState.STANDING;
@@ -41,19 +40,21 @@ public class Megaman extends Sprite {
     private Animation<TextureRegion> megamanStandShoot;
     private Animation<TextureRegion> megamanRunShoot;
     private Animation<TextureRegion> megamanJumpShoot;
+    private Animation<TextureRegion> megamanDamage;
 
     private TextureRegion megamanJump;
 
     private Array<Bullet> gunShots = new Array<Bullet>();
 
-    private Array<Explosion> explosions = new Array<Explosion>();
+    private Array<DefeatLob> explosions = new Array<DefeatLob>();
 
     private PlayScreen playScreen;
 
     private boolean rightDirection;
     private boolean isDead = false;
-    @Setter
+
     private boolean isShooting = false;
+    private boolean isHit = false;
     private float stateTimer = 0;
 
     public Megaman(PlayScreen playScreen) {
@@ -70,7 +71,15 @@ public class Megaman extends Sprite {
         createStandShootTexture();
         createRunShootAnimation();
         createJumpShootAnimation();
+        createHitAnimation();
         setBounds(0, 0, 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
+    }
+
+    private void createHitAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("damage")));
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Hit")));
+        megamanDamage = new Animation<TextureRegion>(0.35f, frames);
     }
 
     private void createExplosions() {
@@ -78,7 +87,7 @@ public class Megaman extends Sprite {
         for (int i = 1; i <= 4; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Explosion" + i)));
         }
-        explosions = Utils.createExplosionEffect(world, b2body, frames);
+        explosions = EffectUtils.createExplosionLobEffects(world, b2body, frames);
     }
 
     private void createSpawnAnimation() {
@@ -154,10 +163,9 @@ public class Megaman extends Sprite {
         CircleShape shape = new CircleShape();
         shape.setRadius(12 / MegamanGame.PPM);
 
-        /* TODO Filter collision categories
-        fixtureDef.filter.categoryBits =
-        fixtureDef.filter.maskBits
-        */
+        fixtureDef.filter.categoryBits = MegamanGame.PLAYER_BIT;
+        fixtureDef.filter.maskBits = MegamanGame.GROUND_BIT | MegamanGame.PLATFORM_BIT
+                | MegamanGame.ENEMY_BIT | MegamanGame.WALL_BIT | MegamanGame.BULLET_BIT;
 
         fixtureDef.shape = shape;
         // set Spritedata
@@ -176,19 +184,17 @@ public class Megaman extends Sprite {
 
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
 
-        if (!isDead()) {
-            setRegion(getFrame(delta));
-            // delete Gun shoot
-            for (Bullet shoot : gunShots) {
-                shoot.update(delta);
-                if (shoot.isDestroyed()) {
-                    gunShots.removeValue(shoot, true);
-                }
+        setRegion(getFrame(delta));
+        // delete Gun shoot
+        for (Bullet shoot : gunShots) {
+            shoot.update(delta);
+            if (shoot.isDestroyed()) {
+                gunShots.removeValue(shoot, true);
             }
-        } else {
-            for (Explosion explosion : explosions) {
-                explosion.update(delta);
-            }
+        }
+
+        for (DefeatLob explosion : explosions) {
+            explosion.update(delta);
         }
     }
 
@@ -205,6 +211,7 @@ public class Megaman extends Sprite {
             this.isDead = true;
             world.destroyBody(b2body);
             createExplosions();
+            MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DEFEAT_SOUND, Sound.class).play();
         }
     }
 
@@ -230,10 +237,11 @@ public class Megaman extends Sprite {
         if (currentState == ObjectState.JUMPING || currentState == ObjectState.FALLING) {
             currentState = ObjectState.JUMPING_SHOOT;
         }
+        MegamanGame.assetManager.get(MegamanGame.MEGAMAN_BUSTER_SOUND, Sound.class).play();
     }
 
     public void hit() {
-        // TODO is hit by enemy
+        isHit = true;
     }
 
     public Vector2 getLinearVelocity() {
@@ -254,6 +262,9 @@ public class Megaman extends Sprite {
 
         if (isDead) {
             return  ObjectState.DEAD;
+        }
+        if (isHit) {
+            return ObjectState.HIT;
         }
         if (!isShooting) {
             if ((getLinearVelocity().y > 0 && currentState == ObjectState.JUMPING) ||
@@ -294,7 +305,8 @@ public class Megaman extends Sprite {
                 break;
             case HIT:
             case DEAD:
-                // TODO implement dead textures
+                setBounds(getX(), getY(), 30 / MegamanGame.PPM, 30 / MegamanGame.PPM);
+                textureRegion = megamanDamage.getKeyFrame(stateTimer, true);
                 break;
             case RUNNING:
                 setBounds(getX(), getY(), 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
@@ -353,7 +365,9 @@ public class Megaman extends Sprite {
                 || (prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.RUNNING_SHOOT)) {
             isShooting = false;
         }
-
+        if (megamanDamage.isAnimationFinished(stateTimer)) {
+            isHit = false;
+        }
         stateTimer = (currentState == prevState) ? stateTimer + delta : 0;
         prevState = currentState;
 
@@ -376,17 +390,19 @@ public class Megaman extends Sprite {
 
     @Override
     public void draw(Batch batch) {
-        super.draw(batch);
+        if (!isDead()) {
+            super.draw(batch);
+        }
 
         for (Bullet shoot: gunShots) {
             shoot.draw(batch);
         }
-        for (Explosion effect: explosions) {
+        for (DefeatLob effect: explosions) {
             effect.draw(batch);
         }
     }
 
     public boolean isReady() {
-        return spawn.isSpawnFinished();
+        return spawn.isSpawnFinished() && !isDead();
     }
 }
