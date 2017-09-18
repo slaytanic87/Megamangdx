@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import lombok.Data;
+import lombok.Getter;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.scenes.Hud;
 import org.megamangdx.game.sprites.Megaman;
@@ -26,7 +27,6 @@ import org.megamangdx.game.utils.B2WorldCreator;
 /**
  * @author Lam on 12.08.17.
  */
-@Data
 public class PlayScreen implements Screen {
 
     private MegamanGame game;
@@ -37,8 +37,9 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private Viewport viewport;
     private Hud hud;
-
+    @Getter
     private TextureAtlas atlas;
+    @Getter
     private World world;
 
     private Megaman player;
@@ -74,6 +75,18 @@ public class PlayScreen implements Screen {
         protoman = new Protoman(this);
         // create HUD Scores
         hud = new Hud(game.batch);
+
+        music = MegamanGame.assetManager.get(MegamanGame.MEGAMAN_WILY_STAGE_1_2, Music.class);
+        music.setLooping(true);
+        music.setVolume(0.3f);
+    }
+
+    public void playMusic() {
+        music.play();
+    }
+
+    public void stopMusic() {
+        music.stop();
     }
 
     public void loadNewMap(String fileName) {
@@ -90,7 +103,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-
+        playMusic();
     }
 
 
@@ -110,6 +123,7 @@ public class PlayScreen implements Screen {
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
                 player.die();
+                stopMusic();
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                 player.hit();
@@ -170,12 +184,12 @@ public class PlayScreen implements Screen {
 
     @Override
     public void pause() {
-
+        music.pause();
     }
 
     @Override
     public void resume() {
-
+        music.play();
     }
 
     @Override
@@ -185,6 +199,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
+        music.stop();
         map.dispose();
         renderer.dispose();
         world.dispose();

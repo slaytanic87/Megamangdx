@@ -1,5 +1,6 @@
 package org.megamangdx.game.sprites.effects;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -62,7 +63,10 @@ public class Bullet extends Sprite {
         this.weaponType = weaponType;
 
         switch (weaponType) {
-            case NORMAL: frames.add(new TextureRegion(screen.getAtlas().findRegion("normal1")));
+            case NORMAL:
+                frames.add(new TextureRegion(screen.getAtlas().findRegion("normal1")));
+                MegamanGame.assetManager.get(MegamanGame.MEGAMAN_BUSTER_SOUND, Sound.class).play();
+                break;
             default:
         }
 

@@ -237,7 +237,6 @@ public class Megaman extends Sprite {
         if (currentState == ObjectState.JUMPING || currentState == ObjectState.FALLING) {
             currentState = ObjectState.JUMPING_SHOOT;
         }
-        MegamanGame.assetManager.get(MegamanGame.MEGAMAN_BUSTER_SOUND, Sound.class).play();
     }
 
     public void hit() {
