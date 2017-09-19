@@ -18,4 +18,17 @@ public enum ObjectState {
     STANDING,
     STANDING_SHOOT;
 
+
+    private static boolean isShootState(ObjectState currentState) {
+        boolean afterShoot = false;
+        switch (currentState) {
+            case JUMPING_SHOOT:
+            case RUNNING_SHOOT:
+            case STANDING_SHOOT:
+                afterShoot = true;
+                break;
+            default:
+        }
+        return afterShoot;
+    }
 }

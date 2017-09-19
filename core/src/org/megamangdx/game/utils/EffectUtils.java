@@ -1,5 +1,8 @@
 package org.megamangdx.game.utils;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,8 +18,8 @@ public class EffectUtils {
 
     public static Array<DefeatLob> createExplosionLobEffects(World world, Body b2body, Array<TextureRegion> frames) {
         Array<DefeatLob> effects = new Array<DefeatLob>();
-        final float impulse = 1.2f;
-        final float inpulse2 = 0.8f;
+        float impulse = 1.2f;
+        float inpulse2 = 0.8f;
         final float duration = 0.12f;
         effects.addAll(
                 new DefeatLob(world, b2body, b2body.getPosition().x, b2body.getPosition().y,
@@ -36,7 +39,50 @@ public class EffectUtils {
                 new DefeatLob(world, b2body, b2body.getPosition().x, b2body.getPosition().y,
                         frames, new Vector2(-inpulse2, inpulse2), duration) // left up
         );
+
+        impulse -= 0.7f;
+
+        effects.addAll(
+                new DefeatLob(world, b2body, b2body.getPosition().x, b2body.getPosition().y,
+                        frames, new Vector2(-impulse, 0), duration), // left
+                new DefeatLob(world, b2body, b2body.getPosition().x, b2body.getPosition().y,
+                        frames, new Vector2(impulse, 0), duration), // right
+                new DefeatLob(world, b2body, b2body.getPosition().x, b2body.getPosition().y,
+                        frames, new Vector2(0, impulse), duration), // up
+                new DefeatLob(world, b2body, b2body.getPosition().x, b2body.getPosition().y,
+                        frames, new Vector2(0, -impulse), duration) // down
+        );
         return effects;
     }
+
+    public static TextureRegion tintingSpriteColor(Color[] oldColor, Color[] targetColors,
+                                                   TextureRegion textureRegion) {
+        if (oldColor.length != targetColors.length) {
+            throw new RuntimeException("Old colors size have to be the same length as target colors!");
+        }
+
+        Texture texture = textureRegion.getTexture();
+        if (!texture.getTextureData().isPrepared()) {
+            texture.getTextureData().prepare();
+        }
+        Pixmap pixmap = texture.getTextureData().consumePixmap();
+
+        for (int x = 0; x < textureRegion.getRegionWidth(); x++) {
+            for (int y = 0; y < textureRegion.getRegionHeight(); y++) {
+                int colorInt8888 = pixmap.getPixel(textureRegion.getRegionX() + x,
+                        textureRegion.getRegionY() + y);
+                for (int i = 0; i < oldColor.length; i++) {
+                    if (Color.argb8888(oldColor[i]) == colorInt8888) {
+                        pixmap.setColor(targetColors[i]);
+                    }
+                }
+            }
+        }
+        textureRegion.setTexture(new Texture(pixmap));
+        texture.getTextureData().disposePixmap();
+        pixmap.dispose();
+        return textureRegion;
+    }
+
 
 }

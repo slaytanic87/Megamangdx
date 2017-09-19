@@ -22,6 +22,9 @@ import org.megamangdx.game.utils.EffectUtils;
 @Data
 public class Megaman extends Sprite {
 
+    public static final String HEXFIRSTCOLOR = "0073f7ff";
+    public static final String HEXSECONDCOLOR = "00ffffff";
+
     public static final float MAX_VELOCITY = 1.2f;
     public static final int START_POSX = 40;
     public static final int START_POSY = 350;
@@ -46,7 +49,7 @@ public class Megaman extends Sprite {
 
     private Array<Bullet> gunShots = new Array<Bullet>();
 
-    private Array<DefeatLob> explosions = new Array<DefeatLob>();
+    private Array<DefeatLob> explosionLobs = new Array<DefeatLob>();
 
     private PlayScreen playScreen;
 
@@ -55,6 +58,9 @@ public class Megaman extends Sprite {
 
     private boolean isShooting = false;
     private boolean isHit = false;
+    private static float HIT_TIMER_MAX = 0.5f;
+
+    private float hitTimer = 0;
     private float stateTimer = 0;
 
     public Megaman(PlayScreen playScreen) {
@@ -77,17 +83,18 @@ public class Megaman extends Sprite {
 
     private void createHitAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("damage")));
         frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Hit")));
+        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("damage")));
+
         megamanDamage = new Animation<TextureRegion>(0.35f, frames);
     }
 
-    private void createExplosions() {
+    private void createExplosionLobs() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
         for (int i = 1; i <= 4; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Explosion" + i)));
         }
-        explosions = EffectUtils.createExplosionLobEffects(world, b2body, frames);
+        explosionLobs = EffectUtils.createExplosionLobEffects(world, b2body, frames);
     }
 
     private void createSpawnAnimation() {
@@ -184,6 +191,12 @@ public class Megaman extends Sprite {
 
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
 
+        hitTimer = !isHit ? 0: hitTimer + delta;
+        // reset hit animation after character was hit
+        if (isHit && hitTimer >= HIT_TIMER_MAX) {
+            isHit = false;
+        }
+
         setRegion(getFrame(delta));
         // delete Gun shoot
         for (Bullet shoot : gunShots) {
@@ -193,7 +206,7 @@ public class Megaman extends Sprite {
             }
         }
 
-        for (DefeatLob explosion : explosions) {
+        for (DefeatLob explosion : explosionLobs) {
             explosion.update(delta);
         }
     }
@@ -210,7 +223,7 @@ public class Megaman extends Sprite {
         if (!isDead()) {
             this.isDead = true;
             world.destroyBody(b2body);
-            createExplosions();
+            createExplosionLobs();
             MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DEFEAT_SOUND, Sound.class).play();
         }
     }
@@ -240,7 +253,11 @@ public class Megaman extends Sprite {
     }
 
     public void hit() {
-        isHit = true;
+        if (!isHit) {
+            isHit = true;
+            hitTimer = 0;
+            currentState = ObjectState.HIT;
+        }
     }
 
     public Vector2 getLinearVelocity() {
@@ -364,28 +381,13 @@ public class Megaman extends Sprite {
                 || (prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.RUNNING_SHOOT)) {
             isShooting = false;
         }
-        if (megamanDamage.isAnimationFinished(stateTimer)) {
-            isHit = false;
-        }
+        // if any state or tileset was change, then reset the state timer for the next tileset
         stateTimer = (currentState == prevState) ? stateTimer + delta : 0;
         prevState = currentState;
 
         return textureRegion;
     }
 
-
-    private boolean isShootState(ObjectState currentState) {
-        boolean afterShoot = false;
-        switch (currentState) {
-            case JUMPING_SHOOT:
-            case RUNNING_SHOOT:
-            case STANDING_SHOOT:
-                afterShoot = true;
-                break;
-            default:
-        }
-        return afterShoot;
-    }
 
     @Override
     public void draw(Batch batch) {
@@ -396,12 +398,12 @@ public class Megaman extends Sprite {
         for (Bullet shoot: gunShots) {
             shoot.draw(batch);
         }
-        for (DefeatLob effect: explosions) {
+        for (DefeatLob effect: explosionLobs) {
             effect.draw(batch);
         }
     }
 
     public boolean isReady() {
-        return spawn.isSpawnFinished() && !isDead();
+        return spawn.isSpawnFinished() && !isDead() && !isHit;
     }
 }

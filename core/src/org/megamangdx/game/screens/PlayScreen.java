@@ -16,7 +16,6 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import lombok.Data;
 import lombok.Getter;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.scenes.Hud;
@@ -103,7 +102,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        playMusic();
+        //playMusic();
     }
 
 
@@ -121,13 +120,13 @@ public class PlayScreen implements Screen {
             if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {
                 player.shoot();
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-                player.die();
-                stopMusic();
-            }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-                player.hit();
-            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            player.die();
+            stopMusic();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            player.hit();
         }
     }
 
