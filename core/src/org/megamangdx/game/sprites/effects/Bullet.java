@@ -16,14 +16,14 @@ import org.megamangdx.game.screens.PlayScreen;
  */
 public class Bullet extends Sprite {
 
-    public enum WeaponType  { NORMAL }
+    public enum WeaponType  {BUSTER}
 
     private PlayScreen screen;
     private World world;
     private Body b2body;
 
     private Array<TextureRegion> frames = new Array<TextureRegion>();
-    private WeaponType weaponType = WeaponType.NORMAL;
+    private WeaponType weaponType = WeaponType.BUSTER;
 
     private Animation<TextureRegion> fireAnimation;
 
@@ -63,7 +63,7 @@ public class Bullet extends Sprite {
         this.weaponType = weaponType;
 
         switch (weaponType) {
-            case NORMAL:
+            case BUSTER:
                 frames.add(new TextureRegion(screen.getAtlas().findRegion("normal1")));
                 MegamanGame.assetManager.get(MegamanGame.MEGAMAN_BUSTER_SOUND, Sound.class).play();
                 break;
@@ -93,7 +93,9 @@ public class Bullet extends Sprite {
 
         // TODO collisions
         fixtureDef.filter.categoryBits = MegamanGame.BULLET_BIT;
-        //fixtureDef.filter.maskBits = ;
+        // define collision categorie, which should be detected
+        fixtureDef.filter.maskBits = MegamanGame.GROUND_BIT | MegamanGame.PLATFORM_BIT
+                | MegamanGame.ENEMY_BIT | MegamanGame.PLAYER_BIT;
         fixtureDef.shape = shape;
         fixtureDef.restitution = 1;
         fixtureDef.friction = 0;

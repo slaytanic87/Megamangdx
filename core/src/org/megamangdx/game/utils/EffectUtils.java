@@ -55,10 +55,11 @@ public class EffectUtils {
         return effects;
     }
 
-    public static TextureRegion tintingSpriteColor(Color[] oldColor, Color[] targetColors,
+    public static TextureRegion tintingSpriteColor(Color[] oldColors, Color[] targetColors,
                                                    TextureRegion textureRegion) {
-        if (oldColor.length != targetColors.length) {
-            throw new RuntimeException("Old colors size have to be the same length as target colors!");
+        if (oldColors.length != targetColors.length) {
+            throw new RuntimeException("the number of reference colors size have to be the same "
+                   + "length as target colors!");
         }
 
         Texture texture = textureRegion.getTexture();
@@ -71,9 +72,10 @@ public class EffectUtils {
             for (int y = 0; y < textureRegion.getRegionHeight(); y++) {
                 int colorInt8888 = pixmap.getPixel(textureRegion.getRegionX() + x,
                         textureRegion.getRegionY() + y);
-                for (int i = 0; i < oldColor.length; i++) {
-                    if (Color.argb8888(oldColor[i]) == colorInt8888) {
-                        pixmap.setColor(targetColors[i]);
+                for (int i = 0; i < oldColors.length; i++) {
+                    if (Color.rgba8888(oldColors[i]) == colorInt8888) {
+                        pixmap.drawPixel(textureRegion.getRegionX() + x, textureRegion.getRegionY() + y,
+                                Color.rgba8888(targetColors[i]));
                     }
                 }
             }

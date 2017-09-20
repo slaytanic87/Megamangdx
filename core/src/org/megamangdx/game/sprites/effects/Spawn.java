@@ -35,8 +35,10 @@ public class Spawn {
         this.beamTexture = beamTexture;
     }
 
-    public void finishSpawn() {
-        this.spawnFinished = true;
+    public void processFinishSpawn(float stateTimer) {
+        if(getLandingAnimation().isAnimationFinished(stateTimer) && !isSpawnFinished()) {
+            this.spawnFinished = true;
+        }
     }
 
     public void setLanded() {

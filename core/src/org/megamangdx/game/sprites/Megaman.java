@@ -22,8 +22,8 @@ import org.megamangdx.game.utils.EffectUtils;
 @Data
 public class Megaman extends Sprite {
 
-    public static final String HEXFIRSTCOLOR = "0073f7ff";
-    public static final String HEXSECONDCOLOR = "00ffffff";
+    public static final String HEX_FIRST_COLOR = "0073f7ff"; // RRGGBBAA
+    public static final String HEX_SECOND_COLOR = "00ffffff";
 
     public static final float MAX_VELOCITY = 1.2f;
     public static final int START_POSX = 40;
@@ -138,6 +138,7 @@ public class Megaman extends Sprite {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Stand" + i)));
         }
         megamanStand = new Animation<TextureRegion>(0.9f, frames);
+
     }
 
     private void createStandShootTexture() {
@@ -225,6 +226,7 @@ public class Megaman extends Sprite {
             world.destroyBody(b2body);
             createExplosionLobs();
             MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DEFEAT_SOUND, Sound.class).play();
+            playScreen.stopMusic();
         }
     }
 
@@ -245,7 +247,7 @@ public class Megaman extends Sprite {
     public void shoot() {
         isShooting = true;
         gunShots.add(new Bullet(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
-                Bullet.WeaponType.NORMAL));
+                Bullet.WeaponType.BUSTER));
         // if the player is in the air and shoot button was hit
         if (currentState == ObjectState.JUMPING || currentState == ObjectState.FALLING) {
             currentState = ObjectState.JUMPING_SHOOT;
@@ -257,6 +259,7 @@ public class Megaman extends Sprite {
             isHit = true;
             hitTimer = 0;
             currentState = ObjectState.HIT;
+            MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DAMAGE, Sound.class).play();
         }
     }
 
@@ -317,7 +320,7 @@ public class Megaman extends Sprite {
                 break;
             case MATERIALIZED_BEAM:
                 setBounds(getX(), getY(), 22 / MegamanGame.PPM, 20 / MegamanGame.PPM);
-                textureRegion = spawn.getLandingAnimation().getKeyFrame(stateTimer);
+                textureRegion = spawn.getLandingAnimation().getKeyFrame(stateTimer, false);
                 break;
             case HIT:
             case DEAD:
@@ -357,9 +360,7 @@ public class Megaman extends Sprite {
                 break;
         }
         // check if megaman is landing when beam
-        if (spawn.getLandingAnimation().isAnimationFinished(stateTimer) && !spawn.isSpawnFinished()) {
-            spawn.finishSpawn();
-        }
+        spawn.processFinishSpawn(stateTimer);
 
         // flip sprite, depends on direction
         if ((getLinearVelocity().x < 0 || !rightDirection) && !textureRegion.isFlipX()) {
@@ -377,11 +378,9 @@ public class Megaman extends Sprite {
         }
 
         // reset shoot state if the state is changing from shooting mode to not shooting mode
-        if ((prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.STANDING_SHOOT)
-                || (prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.RUNNING_SHOOT)) {
-            isShooting = false;
-        }
-        // if any state or tileset was change, then reset the state timer for the next tileset
+        isShooting = ObjectState.resetShootState(prevState, currentState, isShooting);
+
+        // if any state or tileset was change, then reset the state timer for the new tileset
         stateTimer = (currentState == prevState) ? stateTimer + delta : 0;
         prevState = currentState;
 

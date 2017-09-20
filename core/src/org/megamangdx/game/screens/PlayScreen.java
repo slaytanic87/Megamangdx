@@ -102,7 +102,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        //playMusic();
+        playMusic();
     }
 
 
@@ -123,7 +123,6 @@ public class PlayScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             player.die();
-            stopMusic();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             player.hit();
@@ -188,12 +187,11 @@ public class PlayScreen implements Screen {
 
     @Override
     public void resume() {
-        music.play();
+        playMusic();
     }
 
     @Override
     public void hide() {
-
     }
 
     @Override

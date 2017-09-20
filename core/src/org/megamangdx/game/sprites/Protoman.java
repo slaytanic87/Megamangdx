@@ -2,6 +2,7 @@ package org.megamangdx.game.sprites;
 
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -154,7 +155,7 @@ public class Protoman extends Sprite implements Telegraph {
     public void shoot() {
         isShooting = true;
         gunShots.add(new Bullet(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
-                Bullet.WeaponType.NORMAL));
+                Bullet.WeaponType.BUSTER));
         // if the player is in the air and shoot button was hit
         if (currentState == ObjectState.JUMPING || currentState == ObjectState.FALLING) {
             currentState = JUMPING_SHOOT;
@@ -162,7 +163,12 @@ public class Protoman extends Sprite implements Telegraph {
     }
 
     public void die() {
-        this.isDead = true;
+        if (!isDead()) {
+            this.isDead = true;
+            world.destroyBody(b2body);
+            MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DEFEAT_SOUND, Sound.class).play();
+            playScreen.stopMusic();
+        }
     }
 
     /**
@@ -285,9 +291,7 @@ public class Protoman extends Sprite implements Telegraph {
         }
 
         // check if protoman is landing when beam
-        if (spawn.getLandingAnimation().isAnimationFinished(stateTimer) && !spawn.isSpawnFinished()) {
-            spawn.finishSpawn();
-        }
+        spawn.processFinishSpawn(stateTimer);
 
         // flip sprite, depends on direction
         if ((getLinearVelocity().x < 0 || !rightDirection) && textureRegion.isFlipX()) {
@@ -305,10 +309,7 @@ public class Protoman extends Sprite implements Telegraph {
         }
 
         // reset shoot state if the state is changing from shooting mode to not shooting mode
-        if ((prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.STANDING_SHOOT)
-                || (prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.RUNNING_SHOOT)) {
-            isShooting = false;
-        }
+        isShooting = ObjectState.resetShootState(prevState, currentState, isShooting);
 
         stateTimer = (prevState == currentState) ? stateTimer + delta : 0;
         prevState = currentState;

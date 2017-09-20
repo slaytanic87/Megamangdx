@@ -19,7 +19,7 @@ public enum ObjectState {
     STANDING_SHOOT;
 
 
-    private static boolean isShootState(ObjectState currentState) {
+    public static boolean isShootState(ObjectState currentState) {
         boolean afterShoot = false;
         switch (currentState) {
             case JUMPING_SHOOT:
@@ -30,5 +30,13 @@ public enum ObjectState {
             default:
         }
         return afterShoot;
+    }
+
+    public static boolean resetShootState(ObjectState prevState, ObjectState currentState, boolean isShootState) {
+        if ((prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.STANDING_SHOOT)
+                || (prevState == ObjectState.JUMPING_SHOOT && currentState == ObjectState.RUNNING_SHOOT)) {
+            return false;
+        }
+        return isShootState;
     }
 }

@@ -26,6 +26,7 @@ public class MegamanGame extends Game {
 	public static final String MEGAMAN_WILY_STAGE_1_2 = "audio/music/wily-stage-1-2.mp3";
 	public static final String MEGAMAN_DEFEAT_SOUND = "audio/sounds/megaman-defeat.mp3";
 	public static final String MEGAMAN_BUSTER_SOUND = "audio/sounds/megaman-buster.mp3";
+	public static final String MEGAMAN_DAMAGE = "audio/sounds/megaman-damage.mp3";
 
 	public static AssetManager assetManager;
 
@@ -36,6 +37,7 @@ public class MegamanGame extends Game {
 		assetManager.load(MEGAMAN_WILY_STAGE_1_2, Music.class);
 		assetManager.load(MEGAMAN_DEFEAT_SOUND, Sound.class);
 		assetManager.load(MEGAMAN_BUSTER_SOUND, Sound.class);
+		assetManager.load(MEGAMAN_DAMAGE, Sound.class);
 		assetManager.finishLoading();
 
 		setScreen(new PlayScreen(this));
