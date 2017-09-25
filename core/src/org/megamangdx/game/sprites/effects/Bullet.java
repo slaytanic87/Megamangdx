@@ -40,7 +40,7 @@ public class Bullet extends Sprite {
      * @param x
      * @param y
      * @param rightDirection
-     * @param weaponType
+     * @param weaponType {@link WeaponType}
      */
     public Bullet(PlayScreen playScreen, float x, float y, boolean rightDirection, WeaponType weaponType) {
         this(playScreen, x, y, rightDirection, weaponType, 0);
@@ -91,7 +91,6 @@ public class Bullet extends Sprite {
         CircleShape shape = new CircleShape();
         shape.setRadius(3 / MegamanGame.PPM);
 
-        // TODO collisions
         fixtureDef.filter.categoryBits = MegamanGame.BULLET_BIT;
         // define collision categorie, which should be detected
         fixtureDef.filter.maskBits = MegamanGame.GROUND_BIT | MegamanGame.PLATFORM_BIT

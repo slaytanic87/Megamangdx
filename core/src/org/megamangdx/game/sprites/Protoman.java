@@ -3,34 +3,36 @@ package org.megamangdx.game.sprites;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import lombok.Data;
 import org.megamangdx.game.MegamanGame;
 import org.megamangdx.game.screens.PlayScreen;
 import org.megamangdx.game.sprites.effects.Bullet;
+import org.megamangdx.game.sprites.effects.DefeatLob;
 import org.megamangdx.game.sprites.effects.Spawn;
-
-import static org.megamangdx.game.sprites.ObjectState.*;
+import org.megamangdx.game.utils.EffectUtils;
 
 /**
  * @author Lam
  */
 @Data
-public class Protoman extends Sprite implements Telegraph {
+public class Protoman extends BaseCharacter implements Telegraph {
+
+    // red
+    public static final String HEX_FIRST_COLOR = "dc2800ff"; // RRGGBBAA
+    // gray
+    public static final String HEX_SECOND_COLOR = "bcbcbcff";
 
     private static final float START_POSX = 350;
     private static final float START_POSY = 350;
-
-    private ObjectState prevState;
-    private ObjectState currentState;
-    private World world;
-    private Body b2body;
+    private static float HIT_TIMER_MAX = 0.5f;
 
     private Animation<TextureRegion> protomanStand;
     private Animation<TextureRegion> protomanStandShoot;
@@ -38,27 +40,21 @@ public class Protoman extends Sprite implements Telegraph {
     private Animation<TextureRegion> protomanRunShoot;
     private Animation<TextureRegion> protomanJumpShoot;
     private Animation<TextureRegion> protomanHit;
-
     private TextureRegion protomanJump;
 
-    private boolean rightDirection;
-
-    private boolean isDead = false;
-    private boolean isShooting = false;
-
     private Array<Bullet> gunShots = new Array<Bullet>();
-
-    private float stateTimer;
+    private Array<DefeatLob> explosionLobs = new Array<DefeatLob>();
 
     private PlayScreen playScreen;
-    private Spawn spawn;
+    private float hitTimer = 0;
+
 
     public Protoman(PlayScreen playScreen) {
         this.playScreen = playScreen;
         world = playScreen.getWorld();
         rightDirection = false;
 
-        createProtomanModel();
+        createModel();
         createSpawnAnimation();
         createStandAnimation();
         createStandShoot();
@@ -70,6 +66,24 @@ public class Protoman extends Sprite implements Telegraph {
 
         setBounds(0, 0, 24 / MegamanGame.PPM, 24 / MegamanGame.PPM);
     }
+
+    private void createExplosionLobs() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        Color[] targetColor = {
+                new Color(Color.valueOf(HEX_FIRST_COLOR)),
+                new Color(Color.valueOf(HEX_SECOND_COLOR))
+        };
+        Color[] oldColor = {
+                new Color(Color.valueOf("0088fcff")),
+                new Color(Color.valueOf("00d0eaff"))
+        };
+        for (int i = 1; i <= 4; i++) {
+            TextureRegion textureRegion = new TextureRegion(playScreen.getAtlas().findRegion("Explosion" + i));
+            frames.add(EffectUtils.tintingSpriteColor(oldColor, targetColor, textureRegion));
+        }
+        explosionLobs = EffectUtils.createExplosionLobEffects(world, b2body, frames);
+    }
+
 
     private void createHitAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
@@ -131,7 +145,8 @@ public class Protoman extends Sprite implements Telegraph {
         protomanStand = new Animation<TextureRegion>(0.2f, frames);
     }
 
-    private void createProtomanModel() {
+    @Override
+    protected void createModel() {
         BodyDef bodyDef = new BodyDef();
         bodyDef.position.set(START_POSX / MegamanGame.PPM, START_POSY / MegamanGame.PPM);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -142,7 +157,6 @@ public class Protoman extends Sprite implements Telegraph {
         CircleShape shape = new CircleShape();
         shape.setRadius(12 / MegamanGame.PPM);
 
-        //TODO Filter collision categories
         fixtureDef.filter.categoryBits = MegamanGame.ENEMY_BIT;
         fixtureDef.filter.maskBits = MegamanGame.GROUND_BIT | MegamanGame.PLATFORM_BIT
                 | MegamanGame.PLAYER_BIT | MegamanGame.WALL_BIT | MegamanGame.BULLET_BIT;
@@ -152,22 +166,26 @@ public class Protoman extends Sprite implements Telegraph {
         b2body.createFixture(fixtureDef).setUserData(this);
     }
 
-    public void shoot() {
-        isShooting = true;
-        gunShots.add(new Bullet(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
-                Bullet.WeaponType.BUSTER));
-        // if the player is in the air and shoot button was hit
-        if (currentState == ObjectState.JUMPING || currentState == ObjectState.FALLING) {
-            currentState = JUMPING_SHOOT;
+    public void hit() {
+        if (!isHit) {
+            super.hit();
+            hitTimer = 0;
+            MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DAMAGE, Sound.class).play();
         }
     }
 
+    public void shoot() {
+        super.shoot();
+        gunShots.add(new Bullet(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
+                Bullet.WeaponType.BUSTER));
+    }
+
     public void die() {
-        if (!isDead()) {
-            this.isDead = true;
-            world.destroyBody(b2body);
-            MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DEFEAT_SOUND, Sound.class).play();
+        if (!isDead) {
+            super.die();
+            createExplosionLobs();
             playScreen.stopMusic();
+            MegamanGame.assetManager.get(MegamanGame.MEGAMAN_DEFEAT_SOUND, Sound.class).play();
         }
     }
 
@@ -179,70 +197,6 @@ public class Protoman extends Sprite implements Telegraph {
     @Override
     public boolean handleMessage(Telegram msg) {
         return false;
-    }
-
-
-    public void moveLeft() {
-        b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
-    }
-
-    public void moveRight() {
-        b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
-    }
-
-    public void jump() {
-        if (!isShooting) {
-            if (currentState != ObjectState.JUMPING) {
-                b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
-                currentState = ObjectState.JUMPING;
-            }
-        } else {
-            if (currentState != ObjectState.JUMPING_SHOOT) {
-                b2body.applyLinearImpulse(new Vector2(0, 2.8f), b2body.getWorldCenter(), true);
-                currentState = ObjectState.JUMPING_SHOOT;
-            }
-        }
-    }
-
-    public Vector2 getLinearVelocity() {
-        return b2body.getLinearVelocity();
-    }
-
-    private ObjectState getState() {
-        if (!spawn.isSpawnFinished()) {
-            if (getLinearVelocity().y == 0) {
-                spawn.setLanded();
-            }
-            if (!spawn.isLanded()) {
-                return BEAM;
-            }
-            return MATERIALIZED_BEAM;
-        }
-        if (isDead) {
-            return DEAD;
-        }
-        if (!isShooting) {
-            if ((getLinearVelocity().y > 0 && currentState == ObjectState.JUMPING)
-                    || (getLinearVelocity().y < 0 && prevState == ObjectState.JUMPING)) {
-                return ObjectState.JUMPING;
-            }
-            if (getLinearVelocity().y < 0) {
-                return ObjectState.FALLING;
-            }
-            if (getLinearVelocity().x != 0) {
-                return ObjectState.RUNNING;
-            }
-            return ObjectState.STANDING;
-        } else {
-            if ((getLinearVelocity().y > 0 && currentState == ObjectState.JUMPING_SHOOT)
-                    || (getLinearVelocity().y < 0 && prevState == ObjectState.JUMPING_SHOOT)) {
-                return JUMPING_SHOOT;
-            }
-            if (getLinearVelocity().x != 0) {
-                return ObjectState.RUNNING_SHOOT;
-            }
-            return ObjectState.STANDING_SHOOT;
-        }
     }
 
     private TextureRegion getFrame(float delta) {
@@ -317,9 +271,16 @@ public class Protoman extends Sprite implements Telegraph {
         return textureRegion;
     }
 
+    @Override
     public void update(float delta) {
         setPosition(b2body.getPosition().x - getWidth() / 2,
                 b2body.getPosition().y - getHeight() / 2);
+
+        hitTimer = !isHit ? 0: hitTimer + delta;
+        // reset hit animation after character was hit
+        if (isHit && hitTimer >= HIT_TIMER_MAX) {
+            isHit = false;
+        }
 
         setRegion(getFrame(delta));
         // remove destroyed gunshots from memory
@@ -328,6 +289,9 @@ public class Protoman extends Sprite implements Telegraph {
             if (bullet.isDestroyed()) {
                 gunShots.removeValue(bullet, true);
             }
+        }
+        for (DefeatLob lob: explosionLobs) {
+            lob.update(delta);
         }
     }
 
@@ -339,9 +303,13 @@ public class Protoman extends Sprite implements Telegraph {
         for (Bullet shoot: gunShots) {
             shoot.draw(batch);
         }
+        for (DefeatLob lob: explosionLobs) {
+            lob.draw(batch);
+        }
     }
 
+    @Override
     public boolean isReady() {
-        return spawn.isSpawnFinished() && !isDead();
+        return spawn.isSpawnFinished() && !isDead;
     }
 }

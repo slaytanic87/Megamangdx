@@ -81,7 +81,7 @@ public class PlayScreen implements Screen {
     }
 
     public void playMusic() {
-        music.play();
+        //music.play();
     }
 
     public void stopMusic() {
@@ -105,16 +105,15 @@ public class PlayScreen implements Screen {
         playMusic();
     }
 
-
     private void handleInput() {
         if (player.isReady()) {
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.getLinearVelocity().x <= Megaman.MAX_VELOCITY) {
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 player.moveRight();
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.getLinearVelocity().x >= -Megaman.MAX_VELOCITY) {
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 player.moveLeft();
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT) && player.getLinearVelocity().y == 0) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT)) {
                 player.jump();
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {

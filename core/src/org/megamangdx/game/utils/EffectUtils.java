@@ -58,8 +58,8 @@ public class EffectUtils {
     public static TextureRegion tintingSpriteColor(Color[] oldColors, Color[] targetColors,
                                                    TextureRegion textureRegion) {
         if (oldColors.length != targetColors.length) {
-            throw new RuntimeException("the number of reference colors size have to be the same "
-                   + "length as target colors!");
+            throw new RuntimeException("the length of the reference colors have to be the same "
+                   + "length as the target colors!");
         }
 
         Texture texture = textureRegion.getTexture();
@@ -76,6 +76,7 @@ public class EffectUtils {
                     if (Color.rgba8888(oldColors[i]) == colorInt8888) {
                         pixmap.drawPixel(textureRegion.getRegionX() + x, textureRegion.getRegionY() + y,
                                 Color.rgba8888(targetColors[i]));
+                        break;
                     }
                 }
             }
