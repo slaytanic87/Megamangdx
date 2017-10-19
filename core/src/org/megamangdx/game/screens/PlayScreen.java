@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -29,7 +28,6 @@ import org.megamangdx.game.utils.B2WorldCreator;
 public class PlayScreen implements Screen {
 
     private MegamanGame game;
-    private Texture texture;
     private OrthographicCamera gameCamera;
 
     // for debugging purpose
@@ -73,7 +71,7 @@ public class PlayScreen implements Screen {
         player = new Megaman(this);
         protoman = new Protoman(this);
         // create HUD Scores
-        hud = new Hud(game.batch);
+        hud = new Hud(game.batch, atlas);
 
         music = MegamanGame.assetManager.get(MegamanGame.MEGAMAN_WILY_STAGE_1_2, Music.class);
         music.setLooping(true);
@@ -81,7 +79,7 @@ public class PlayScreen implements Screen {
     }
 
     public void playMusic() {
-        //music.play();
+         // music.play();
     }
 
     public void stopMusic() {
@@ -90,13 +88,21 @@ public class PlayScreen implements Screen {
 
     public void loadNewMap(String fileName) {
         map = mapLoader.load(fileName);
-        world = new World(new Vector2(0, -10), true);
+        world = new World(new Vector2(MegamanGame.GRAVITY_X, MegamanGame.GRAVITY_Y), true);
+
         float unitScale = 1 / MegamanGame.PPM;
 
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
         gameCamera.position.set(viewport.getWorldWidth() / 2,
                 viewport.getWorldHeight() / 2, 0);
         b2WorldCreator = new B2WorldCreator(world, map);
+
+        //create ground bodies/fixtures
+        b2WorldCreator.createBoundaryBoxWithBody("ground", MegamanGame.GROUND_BIT);
+        //create platform bodies/fixtures
+        b2WorldCreator.createBoundaryBoxWithBody("platform", MegamanGame.PLATFORM_BIT);
+        //create wall bodies/fixtures
+        b2WorldCreator.createBoundaryBoxWithBody("wall", MegamanGame.WALL_BIT);
     }
 
 
@@ -120,11 +126,14 @@ public class PlayScreen implements Screen {
                 player.shoot();
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             player.die();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             player.hit();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            MegamanGame.DEBUG_RENDERER = !MegamanGame.DEBUG_RENDERER;
         }
     }
 
@@ -140,8 +149,10 @@ public class PlayScreen implements Screen {
         // render the map
         renderer.render();
 
-        // render Bo2DDebugLines (game model)
-        debugRenderer.render(world, gameCamera.combined);
+        // render Bo2DDebugLines for testing purpose (game model)
+        if (MegamanGame.DEBUG_RENDERER) {
+            debugRenderer.render(world, gameCamera.combined);
+        }
         // tell game batch to recognize where the camera is in the game world
         game.batch.setProjectionMatrix(gameCamera.combined);
         game.batch.begin();
@@ -156,7 +167,7 @@ public class PlayScreen implements Screen {
         hud.stage.draw();
     }
 
-    public void update(float delta) {
+    protected void update(float delta) {
         handleInput();
         //takes 1 step in the physics simulation(60 times per second)
         world.step(1 / 60f, 6, 2);

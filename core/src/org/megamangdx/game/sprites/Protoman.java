@@ -17,7 +17,7 @@ import org.megamangdx.game.screens.PlayScreen;
 import org.megamangdx.game.sprites.effects.Bullet;
 import org.megamangdx.game.sprites.effects.DefeatLob;
 import org.megamangdx.game.sprites.effects.Spawn;
-import org.megamangdx.game.utils.EffectUtils;
+import org.megamangdx.game.utils.GraphicUtils;
 
 /**
  * @author Lam
@@ -79,9 +79,9 @@ public class Protoman extends BaseCharacter implements Telegraph {
         };
         for (int i = 1; i <= 4; i++) {
             TextureRegion textureRegion = new TextureRegion(playScreen.getAtlas().findRegion("Explosion" + i));
-            frames.add(EffectUtils.tintingSpriteColor(oldColor, targetColor, textureRegion));
+            frames.add(GraphicUtils.tintingSpriteColor(oldColor, targetColor, textureRegion));
         }
-        explosionLobs = EffectUtils.createExplosionLobEffects(world, b2body, frames);
+        explosionLobs = GraphicUtils.createExplosionLobEffects(world, b2body, frames);
     }
 
 

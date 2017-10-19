@@ -21,13 +21,6 @@ public class B2WorldCreator {
         this.world = world;
         this.map = map;
 
-        //create ground bodies/fixtures
-        createBoundaryBoxWithBody("ground", MegamanGame.GROUND_BIT);
-        //create platform bodies/fixtures
-        createBoundaryBoxWithBody("platform", MegamanGame.PLATFORM_BIT);
-        //create wall bodies/fixtures
-        createBoundaryBoxWithBody("wall", MegamanGame.WALL_BIT);
-
     }
 
 

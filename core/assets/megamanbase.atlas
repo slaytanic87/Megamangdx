@@ -1,299 +1,376 @@
 
 megamanbase.png
-size: 512,64
+size: 1024,64
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 Climb1
   rotate: false
-  xy: 222, 7
+  xy: 882, 31
   size: 18, 31
   orig: 18, 31
   offset: 0, 0
   index: -1
 Climb2
   rotate: false
-  xy: 242, 7
+  xy: 902, 31
   size: 18, 31
   orig: 18, 31
   offset: 0, 0
   index: -1
 Explosion1
   rotate: false
-  xy: 375, 21
+  xy: 954, 30
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Explosion2
   rotate: false
-  xy: 393, 21
+  xy: 936, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 Explosion3
   rotate: false
-  xy: 93, 34
+  xy: 164, 34
   size: 28, 28
   orig: 28, 28
   offset: 0, 0
   index: -1
 Explosion4
   rotate: false
-  xy: 123, 34
+  xy: 194, 34
   size: 28, 28
   orig: 28, 28
   offset: 0, 0
   index: -1
 Hit
   rotate: false
-  xy: 153, 34
+  xy: 253, 34
   size: 27, 28
   orig: 27, 28
   offset: 0, 0
   index: -1
 Jump
   rotate: false
-  xy: 35, 31
+  xy: 135, 31
   size: 27, 31
   orig: 27, 31
   offset: 0, 0
   index: -1
 Jump_shoot
   rotate: false
-  xy: 2, 30
+  xy: 102, 30
   size: 31, 32
   orig: 31, 32
   offset: 0, 0
   index: -1
 Run0
   rotate: false
-  xy: 200, 8
+  xy: 747, 38
   size: 20, 24
   orig: 20, 24
   offset: 0, 0
   index: -1
 Run1
   rotate: false
-  xy: 426, 40
+  xy: 579, 40
   size: 24, 22
   orig: 24, 22
   offset: 0, 0
   index: -1
 Run2
   rotate: false
-  xy: 88, 7
+  xy: 936, 38
   size: 16, 24
   orig: 16, 24
   offset: 0, 0
   index: -1
 Run3
   rotate: false
-  xy: 283, 14
+  xy: 790, 40
   size: 21, 22
   orig: 21, 22
   offset: 0, 0
   index: -1
 Run_shoot1
   rotate: false
-  xy: 242, 40
+  xy: 315, 40
   size: 29, 22
   orig: 29, 22
   offset: 0, 0
   index: -1
 Run_shoot2
   rotate: false
-  xy: 35, 5
+  xy: 346, 38
   size: 26, 24
   orig: 26, 24
   offset: 0, 0
   index: -1
 Run_shoot3
   rotate: false
-  xy: 210, 40
+  xy: 102, 6
   size: 30, 22
   orig: 30, 22
   offset: 0, 0
   index: -1
 Spawn0
   rotate: false
-  xy: 411, 5
+  xy: 922, 30
   size: 12, 32
   orig: 12, 32
   offset: 0, 0
   index: -1
 Spawn1
   rotate: false
-  xy: 307, 2
+  xy: 976, 50
   size: 22, 12
   orig: 22, 12
   offset: 0, 0
   index: -1
 Spawn2
   rotate: false
-  xy: 306, 16
+  xy: 813, 42
   size: 22, 20
   orig: 22, 20
   offset: 0, 0
   index: -1
 Stand1
   rotate: false
-  xy: 130, 8
+  xy: 724, 38
   size: 21, 24
   orig: 21, 24
   offset: 0, 0
   index: -1
 Stand2
   rotate: false
-  xy: 153, 8
+  xy: 677, 38
   size: 21, 24
   orig: 21, 24
   offset: 0, 0
   index: -1
 Stand_shoot
   rotate: false
-  xy: 2, 4
+  xy: 282, 38
   size: 31, 24
   orig: 31, 24
   offset: 0, 0
   index: -1
 damage
   rotate: false
-  xy: 273, 38
+  xy: 426, 38
   size: 25, 24
   orig: 25, 24
   offset: 0, 0
   index: -1
+energymeter_blue_orange
+  rotate: false
+  xy: 82, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_blue_white
+  rotate: false
+  xy: 32, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_brown_white
+  rotate: false
+  xy: 62, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_cyan_white
+  rotate: false
+  xy: 42, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_empty
+  rotate: false
+  xy: 92, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_green_white
+  rotate: false
+  xy: 12, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_magenta_white
+  rotate: false
+  xy: 52, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_normal
+  rotate: false
+  xy: 22, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_pink_white
+  rotate: false
+  xy: 72, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_red_yellow
+  rotate: false
+  xy: 2, 6
+  size: 8, 56
+  orig: 8, 56
+  offset: 0, 0
+  index: -1
+energymeter_unit
+  rotate: false
+  xy: 2, 2
+  size: 6, 2
+  orig: 6, 2
+  offset: 0, 0
+  index: -1
 normal1
   rotate: false
-  xy: 262, 2
+  xy: 954, 20
   size: 10, 8
   orig: 10, 8
   offset: 0, 0
   index: -1
 normal2
   rotate: false
-  xy: 330, 16
+  xy: 861, 42
   size: 19, 20
   orig: 19, 20
   offset: 0, 0
   index: -1
 normal3
   rotate: false
-  xy: 351, 2
+  xy: 954, 48
   size: 20, 14
   orig: 20, 14
   offset: 0, 0
   index: -1
 protoman_hit
   rotate: false
-  xy: 182, 34
+  xy: 374, 34
   size: 26, 28
   orig: 26, 28
   offset: 0, 0
   index: -1
 protoman_jump
   rotate: false
-  xy: 64, 33
+  xy: 224, 33
   size: 27, 29
   orig: 27, 29
   offset: 0, 0
   index: -1
 protoman_jump_shoot
   rotate: false
-  xy: 64, 2
+  xy: 402, 33
   size: 22, 29
   orig: 22, 29
   offset: 0, 0
   index: -1
 protoman_run0
   rotate: false
-  xy: 325, 38
+  xy: 478, 38
   size: 23, 24
   orig: 23, 24
   offset: 0, 0
   index: -1
 protoman_run1
   rotate: false
-  xy: 262, 12
+  xy: 769, 38
   size: 19, 24
   orig: 19, 24
   offset: 0, 0
   index: -1
 protoman_run2
   rotate: false
-  xy: 176, 9
+  xy: 700, 39
   size: 22, 23
   orig: 22, 23
   offset: 0, 0
   index: -1
 protoman_run_shoot0
   rotate: false
-  xy: 376, 39
+  xy: 554, 39
   size: 23, 23
   orig: 23, 23
   offset: 0, 0
   index: -1
 protoman_run_shoot1
   rotate: false
-  xy: 300, 38
+  xy: 453, 38
   size: 23, 24
   orig: 23, 24
   offset: 0, 0
   index: -1
 protoman_run_shoot2
   rotate: false
-  xy: 350, 39
+  xy: 503, 39
   size: 24, 23
   orig: 24, 23
   offset: 0, 0
   index: -1
 protoman_spawn0
   rotate: false
-  xy: 500, 30
+  xy: 972, 14
   size: 7, 32
   orig: 7, 32
   offset: 0, 0
   index: -1
 protoman_spawn1
   rotate: false
-  xy: 283, 2
+  xy: 1000, 52
   size: 22, 10
   orig: 22, 10
   offset: 0, 0
   index: -1
 protoman_spawn2
   rotate: false
-  xy: 351, 18
+  xy: 837, 43
   size: 22, 19
   orig: 22, 19
   offset: 0, 0
   index: -1
 protoman_stand0
   rotate: false
-  xy: 106, 8
+  xy: 653, 38
   size: 22, 24
   orig: 22, 24
   offset: 0, 0
   index: -1
 protoman_stand1
   rotate: false
-  xy: 476, 38
+  xy: 605, 38
   size: 22, 24
   orig: 22, 24
   offset: 0, 0
   index: -1
 protoman_stand2
   rotate: false
-  xy: 452, 38
+  xy: 629, 38
   size: 22, 24
   orig: 22, 24
   offset: 0, 0
   index: -1
 protoman_stand_shoot
   rotate: false
-  xy: 401, 39
+  xy: 529, 39
   size: 23, 23
   orig: 23, 23
   offset: 0, 0

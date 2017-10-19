@@ -9,6 +9,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = 400;
 		config.height = 400;
+		config.title = "Sandbox Game";
 		new LwjglApplication(new MegamanGame(), config);
 	}
 }

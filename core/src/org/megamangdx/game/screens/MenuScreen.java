@@ -2,7 +2,6 @@ package org.megamangdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,24 +11,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.ScreenStateManager;
 
 /**
  * @author Lam, Le (msg systems ag) 2017
  */
-public class MenuScreen implements Screen {
+public class MenuScreen extends AScreenState{
 
-    private MegamanGame game;
-    private Viewport viewport;
-    private OrthographicCamera gameCamera;
     // for on-screen controls
     protected Stage stage;
     private Skin skin;
 
-
-
-    public MenuScreen(MegamanGame game) {
+    public MenuScreen(ScreenStateManager manager) {
+        super(manager);
         this.game = game;
         gameCamera = new OrthographicCamera();
         viewport = new FitViewport(MegamanGame.V_WIDTH / MegamanGame.PPM,
@@ -44,7 +39,7 @@ public class MenuScreen implements Screen {
                 viewport.getWorldHeight() / 2, 0);
     }
 
-    @Override
+
     public void show() {
         Gdx.input.setInputProcessor(stage);
         Table table = new Table();
@@ -79,7 +74,8 @@ public class MenuScreen implements Screen {
         }
     }
 
-    private void update(float delta) {
+    @Override
+    public void update(float delta) {
         handleInput();
     }
 
@@ -91,22 +87,6 @@ public class MenuScreen implements Screen {
     }
 
     @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
     public void dispose() {
-
     }
 }

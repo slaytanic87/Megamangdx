@@ -14,7 +14,7 @@ import org.megamangdx.game.screens.PlayScreen;
 import org.megamangdx.game.sprites.effects.Bullet;
 import org.megamangdx.game.sprites.effects.DefeatLob;
 import org.megamangdx.game.sprites.effects.Spawn;
-import org.megamangdx.game.utils.EffectUtils;
+import org.megamangdx.game.utils.GraphicUtils;
 
 /**
  * @author Lam on 12.08.17.
@@ -79,7 +79,7 @@ public class Megaman extends BaseCharacter {
         for (int i = 1; i <= 4; i++) {
             frames.add(new TextureRegion(playScreen.getAtlas().findRegion("Explosion" + i)));
         }
-        explosionLobs = EffectUtils.createExplosionLobEffects(world, b2body, frames);
+        explosionLobs = GraphicUtils.createExplosionLobEffects(world, b2body, frames);
     }
 
     private void createSpawnAnimation() {
@@ -174,6 +174,7 @@ public class Megaman extends BaseCharacter {
 //        b2body.createFixture(fixtureDef).setUserData(this);
     }
 
+    @Override
     public void update(float delta) {
 
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
@@ -198,6 +199,7 @@ public class Megaman extends BaseCharacter {
         }
     }
 
+    @Override
     public void die() {
         if (!isDead) {
             super.die();
@@ -207,12 +209,14 @@ public class Megaman extends BaseCharacter {
         }
     }
 
+    @Override
     public void shoot() {
         super.shoot();
         gunShots.add(new Bullet(playScreen, b2body.getPosition().x, b2body.getPosition().y, rightDirection,
                 Bullet.WeaponType.BUSTER));
     }
 
+    @Override
     public void hit() {
         if (!isHit) {
             super.hit();

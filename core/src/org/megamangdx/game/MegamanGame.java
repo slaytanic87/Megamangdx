@@ -9,7 +9,11 @@ import org.megamangdx.game.screens.PlayScreen;
 
 public class MegamanGame extends Game {
 
-	public SpriteBatch batch;
+	public static boolean DEBUG_RENDERER = true;
+	public static float GRAVITY_Y = -10;
+	public static float GRAVITY_X = 0;
+
+    public SpriteBatch batch;
 	public static final int V_WIDTH = 400;
 	public static final int V_HEIGHT = 400;
 	public static final float PPM = 150;
