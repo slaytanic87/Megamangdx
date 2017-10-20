@@ -7,7 +7,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
-import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.application.MegamanGame;
 
 /**
  * @author Lam

@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import lombok.Getter;
-import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.application.MegamanGame;
 import org.megamangdx.game.utils.GraphicUtils;
 
 /**

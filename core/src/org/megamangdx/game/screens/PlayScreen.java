@@ -2,7 +2,6 @@ package org.megamangdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,12 +10,11 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import lombok.Getter;
-import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.application.MegamanGame;
+import org.megamangdx.game.ScreenStateManager;
 import org.megamangdx.game.scenes.Hud;
 import org.megamangdx.game.sprites.Megaman;
 import org.megamangdx.game.sprites.Protoman;
@@ -25,14 +23,8 @@ import org.megamangdx.game.utils.B2WorldCreator;
 /**
  * @author Lam on 12.08.17.
  */
-public class PlayScreen implements Screen {
+public class PlayScreen extends AScreenState  {
 
-    private MegamanGame game;
-    private OrthographicCamera gameCamera;
-
-    // for debugging purpose
-    private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
-    private Viewport viewport;
     private Hud hud;
     @Getter
     private TextureAtlas atlas;
@@ -49,10 +41,9 @@ public class PlayScreen implements Screen {
 
     private B2WorldCreator b2WorldCreator;
 
-    private Music music;
+    public PlayScreen(ScreenStateManager game) {
 
-    public PlayScreen(MegamanGame game) {
-        this.game = game;
+        super(game);
 
         atlas = new TextureAtlas("megamanbase.atlas");
 
@@ -71,7 +62,7 @@ public class PlayScreen implements Screen {
         player = new Megaman(this);
         protoman = new Protoman(this);
         // create HUD Scores
-        hud = new Hud(game.batch, atlas);
+        hud = new Hud(game.getMegamanGame().batch, atlas);
 
         music = MegamanGame.assetManager.get(MegamanGame.MEGAMAN_WILY_STAGE_1_2, Music.class);
         music.setLooping(true);
@@ -167,6 +158,7 @@ public class PlayScreen implements Screen {
         hud.stage.draw();
     }
 
+    @Override
     protected void update(float delta) {
         handleInput();
         //takes 1 step in the physics simulation(60 times per second)

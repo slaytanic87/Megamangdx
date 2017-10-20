@@ -1,7 +1,10 @@
 package org.megamangdx.game;
 
 import lombok.Getter;
+import org.megamangdx.game.application.MegamanGame;
 import org.megamangdx.game.screens.AScreenState;
+import org.megamangdx.game.screens.MenuScreen;
+import org.megamangdx.game.screens.PlayScreen;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Stack;
@@ -27,23 +30,21 @@ public class ScreenStateManager {
         this.screenStack = new Stack<AScreenState>();
     }
 
-    public AScreenState getScreenByState(GameState state) {
+    private AScreenState getScreenByState(GameState state) {
+        AScreenState screenState;
         switch (state) {
             case MENUSCREEN:
-                throw new NotImplementedException();
+                screenState = new MenuScreen(this);
+                megamanGame.setScreen(screenState);
+                return screenState;
             case GAMESCREEN:
-                throw new NotImplementedException();
+                screenState = new PlayScreen(this);
+                megamanGame.setScreen(screenState);
+                return  screenState;
             case SPLASHSCREEN:
                 throw new NotImplementedException();
             default:
                 throw new RuntimeException("Unknown state");
-        }
-    }
-
-
-    public void update(float delta) {
-        if (screenStack.size() != 0) {
-            screenStack.peek().update(delta);
         }
     }
 
@@ -61,7 +62,9 @@ public class ScreenStateManager {
     }
 
     public void setState(GameState state) {
-        screenStack.pop().dispose();
+        if (!screenStack.isEmpty()) {
+            screenStack.pop().dispose();
+        }
         screenStack.push(getScreenByState(state));
     }
 

@@ -1,17 +1,18 @@
 package org.megamangdx.game.screens;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.application.MegamanGame;
 import org.megamangdx.game.ScreenStateManager;
 
 /**
  * @author Lam, Le (msg systems ag) 2017
  */
-public abstract class AScreenState {
+public abstract class AScreenState  implements Screen {
 
     protected ScreenStateManager stateManager;
     protected MegamanGame game;
@@ -35,7 +36,7 @@ public abstract class AScreenState {
                 MegamanGame.V_HEIGHT / MegamanGame.PPM, gameCamera);
     }
 
-    public abstract void update(float delta);
+    protected abstract void update(float delta);
 
     public abstract void render(float delta);
 

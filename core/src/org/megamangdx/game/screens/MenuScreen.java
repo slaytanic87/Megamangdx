@@ -4,20 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.application.MegamanGame;
 import org.megamangdx.game.ScreenStateManager;
 
 /**
  * @author Lam, Le (msg systems ag) 2017
  */
-public class MenuScreen extends AScreenState{
+public class MenuScreen extends AScreenState {
 
     // for on-screen controls
     protected Stage stage;
@@ -25,8 +24,6 @@ public class MenuScreen extends AScreenState{
 
     public MenuScreen(ScreenStateManager manager) {
         super(manager);
-        this.game = game;
-        gameCamera = new OrthographicCamera();
         viewport = new FitViewport(MegamanGame.V_WIDTH / MegamanGame.PPM,
                 MegamanGame.V_HEIGHT / MegamanGame.PPM, gameCamera);
         centralizedGameCamera();
@@ -75,7 +72,7 @@ public class MenuScreen extends AScreenState{
     }
 
     @Override
-    public void update(float delta) {
+    protected void update(float delta) {
         handleInput();
     }
 
@@ -84,6 +81,18 @@ public class MenuScreen extends AScreenState{
         viewport.update(width, height);
         centralizedGameCamera();
         gameCamera.update();
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
     }
 
     @Override

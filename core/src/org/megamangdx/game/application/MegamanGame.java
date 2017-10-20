@@ -1,11 +1,11 @@
-package org.megamangdx.game;
+package org.megamangdx.game.application;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.megamangdx.game.screens.PlayScreen;
+import org.megamangdx.game.ScreenStateManager;
 
 public class MegamanGame extends Game {
 
@@ -34,8 +34,11 @@ public class MegamanGame extends Game {
 
 	public static AssetManager assetManager;
 
+	private ScreenStateManager screenStateManager;
+
 	@Override
 	public void create () {
+		screenStateManager = new ScreenStateManager(this);
 		batch = new SpriteBatch();
 		assetManager = new AssetManager();
 		assetManager.load(MEGAMAN_WILY_STAGE_1_2, Music.class);
@@ -44,7 +47,7 @@ public class MegamanGame extends Game {
 		assetManager.load(MEGAMAN_DAMAGE, Sound.class);
 		assetManager.finishLoading();
 
-		setScreen(new PlayScreen(this));
+		screenStateManager.setState(ScreenStateManager.GameState.GAMESCREEN);
 	}
 
 	@Override
@@ -56,5 +59,6 @@ public class MegamanGame extends Game {
 	public void dispose () {
 		super.dispose();
 		batch.dispose();
+		screenStateManager.dispose();
 	}
 }

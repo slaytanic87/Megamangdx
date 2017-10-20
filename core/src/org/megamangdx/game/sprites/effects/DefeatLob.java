@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.application.MegamanGame;
 
 /**
  * @author Lam, Le (msg systems ag) 2017

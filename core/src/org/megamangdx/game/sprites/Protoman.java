@@ -12,7 +12,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import lombok.Data;
-import org.megamangdx.game.MegamanGame;
+import org.megamangdx.game.application.MegamanGame;
 import org.megamangdx.game.screens.PlayScreen;
 import org.megamangdx.game.sprites.effects.Bullet;
 import org.megamangdx.game.sprites.effects.DefeatLob;
