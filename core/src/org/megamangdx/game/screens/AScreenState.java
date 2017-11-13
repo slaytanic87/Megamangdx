@@ -12,7 +12,7 @@ import org.megamangdx.game.ScreenStateManager;
 /**
  * @author Lam, Le (msg systems ag) 2017
  */
-public abstract class AScreenState  implements Screen {
+public abstract class AScreenState implements Screen {
 
     protected ScreenStateManager stateManager;
     protected MegamanGame game;

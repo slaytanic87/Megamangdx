@@ -68,7 +68,7 @@ public class GraphicUtils {
                    + "length as the target colors!");
         }
 
-        Texture texture = textureRegion.getTexture();
+        Texture texture = new Texture(textureRegion.getTexture().getTextureData());
         if (!texture.getTextureData().isPrepared()) {
             texture.getTextureData().prepare();
         }
@@ -133,5 +133,10 @@ public class GraphicUtils {
         return pixmap;
     }
 
+    public static TextureRegion createEmptyTexture(int width, int height) {
+        TextureRegion textureRegion = new TextureRegion();
+        textureRegion.setTexture(new Texture(createColoredPixmap(width, height, "000000ff")));
+        return textureRegion;
+    }
 
 }

@@ -1,0 +1,41 @@
+# TODO List
+
+Tickets
+
+## HUD Energymeter
+
+* inkrement/decrement Energymeter
+** In progress
+
+## State manager
+
+TODO
+
+## Level
+
+* Jungle
+** In progress
+
+## Sound
+
+* Soundeffect
+** In progress
+
+## Menu
+
+* create a startmenu
+** TODO
+
+## Splashscreen
+
+* display Splashscreen when game is started
+** TODO
+
+## Chracters / Enemies
+
+* Megaman
+** Done
+
+* Protoman
+** Done
+

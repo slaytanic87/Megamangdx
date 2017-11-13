@@ -192,7 +192,7 @@ public class Protoman extends BaseCharacter implements Telegraph {
     /**
      * Handle incoming messages from Telegram.
      * @param msg message from sender
-     * @return ist message was delivered?
+     * @return message is delivered?
      */
     @Override
     public boolean handleMessage(Telegram msg) {
@@ -264,7 +264,7 @@ public class Protoman extends BaseCharacter implements Telegraph {
 
         // reset shoot state if the state is changing from shooting mode to not shooting mode
         isShooting = ObjectState.resetShootState(prevState, currentState, isShooting);
-
+        // set stateTimer to zero when an state or tileset was changed see getState()
         stateTimer = (prevState == currentState) ? stateTimer + delta : 0;
         prevState = currentState;
 
