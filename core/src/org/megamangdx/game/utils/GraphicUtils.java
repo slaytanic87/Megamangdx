@@ -88,6 +88,7 @@ public class GraphicUtils {
             }
         }
         textureRegion.setTexture(new Texture(pixmap));
+        // we need to dispose the pixmap here, otherwise it stays unneccessary in the ram
         texture.getTextureData().disposePixmap();
         pixmap.dispose();
         return textureRegion;

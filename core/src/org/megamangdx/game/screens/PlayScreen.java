@@ -16,6 +16,7 @@ import lombok.Getter;
 import org.megamangdx.game.application.MegamanGame;
 import org.megamangdx.game.ScreenStateManager;
 import org.megamangdx.game.scenes.Hud;
+import org.megamangdx.game.sprites.BaseCharacter;
 import org.megamangdx.game.sprites.Megaman;
 import org.megamangdx.game.sprites.Protoman;
 import org.megamangdx.game.utils.B2WorldCreator;
@@ -31,8 +32,8 @@ public class PlayScreen extends AScreenState  {
     @Getter
     private World world;
 
-    private Megaman player;
-    private Protoman protoman;
+    private BaseCharacter player;
+    private BaseCharacter opponent;
 
     // Tiled map
     private TmxMapLoader mapLoader;
@@ -60,7 +61,7 @@ public class PlayScreen extends AScreenState  {
         loadNewMap("Stage.tmx");
 
         player = new Megaman(this);
-        protoman = new Protoman(this);
+        opponent = new Protoman(this);
         // create HUD Scores
         hud = new Hud(game.getMegamanGame().batch, atlas);
 
@@ -149,7 +150,7 @@ public class PlayScreen extends AScreenState  {
         game.batch.begin();
         // drawplayer
         player.draw(game.batch);
-        protoman.draw(game.batch);
+        opponent.draw(game.batch);
 
         // TODO draw enemies etc.
         game.batch.end();
@@ -165,7 +166,7 @@ public class PlayScreen extends AScreenState  {
         world.step(1 / 60f, 6, 2);
 
         player.update(delta);
-        protoman.update(delta);
+        opponent.update(delta);
 
         hud.update(delta);
 
@@ -204,5 +205,6 @@ public class PlayScreen extends AScreenState  {
         world.dispose();
         debugRenderer.dispose();
         hud.dispose();
+        atlas.dispose();
     }
 }

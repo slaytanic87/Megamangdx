@@ -62,5 +62,6 @@ public class MegamanGame extends Game {
 		super.dispose();
 		batch.dispose();
 		screenStateManager.dispose();
+		assetManager.dispose();
 	}
 }

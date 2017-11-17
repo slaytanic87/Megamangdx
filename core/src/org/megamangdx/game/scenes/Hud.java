@@ -40,10 +40,10 @@ public class Hud implements Disposable {
 
     private static final float UPDATE_ENERGYUNIT_INTERVALL = 0.12f;
 
-    Label countdownLabel;
-    Label timeLabel;
-    Label opponentLabel;
-    Label playerLabel;
+    private Label countdownLabel;
+    private Label timeLabel;
+    private Label opponentLabel;
+    private Label playerLabel;
 
     private SpriteBatch batch;
 
@@ -124,8 +124,8 @@ public class Hud implements Disposable {
                 newTextureRegion.getRegionY() + position * 2);
 
         newTextureRegion.setTexture(new Texture(targetPixmap));
-//        texture.getTextureData().disposePixmap();
-//        pixmap.dispose();
+        texture.getTextureData().disposePixmap();
+//        pixmap.dispose(); pixmaps already disposed!
         return newTextureRegion;
     }
 
