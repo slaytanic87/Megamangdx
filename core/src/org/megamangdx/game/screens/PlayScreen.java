@@ -111,7 +111,7 @@ public class PlayScreen extends AScreenState  {
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 player.moveLeft();
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_LEFT)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) {
                 player.jump();
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_LEFT)) {

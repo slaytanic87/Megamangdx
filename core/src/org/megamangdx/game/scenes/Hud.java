@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -57,7 +58,7 @@ public class Hud implements Disposable {
     private TextureRegion playerEnergyBarTexture;
 
     private Image opponentEnergyBar;
-    private TextureRegion opponentEnergyBarTexture;
+    //private TextureRegion opponentEnergyBarTexture;
 
     private TextureAtlas textureAtlas;
 
@@ -95,16 +96,20 @@ public class Hud implements Disposable {
         playerEnergyBarTexture = new TextureRegion(atlas.findRegion("energymeter_empty"));
         playerEnergyBar = new Image(playerEnergyBarTexture);
 
-        opponentEnergyBarTexture = new TextureRegion(atlas.findRegion("energymeter_empty"));
-        opponentEnergyBar = new Image(opponentEnergyBarTexture);
+        //opponentEnergyBarTexture = new TextureRegion(atlas.findRegion("energymeter_empty"));
+        //opponentEnergyBar = new Image(opponentEnergyBarTexture);
 
         energymeterUnit = new TextureRegion(atlas.findRegion("energymeter_unit"));
-        energymeterUnitOpponent = new TextureRegion(atlas.findRegion("energymeter_unit"));
-        setOpponentEnergymeterUnitColor(EnergyUnitSchema.BLUE_WHITE);
+
+        TextureRegionDrawable trd = new TextureRegionDrawable(atlas.findRegion("energymeter_unit"));
+
+        //energymeterUnitOpponent = new TextureRegion(atlas.findRegion("energymeter_unit"));
+        //setOpponentEnergymeterUnitColor(EnergyUnitSchema.BLUE_WHITE);
 
         table.add(playerEnergyBar).expandX().padTop(10);
         table.add(countdownLabel).expandX();
-        table.add(opponentEnergyBar).expandX().padTop(10);
+        //table.add(opponentEnergyBar).expandX().padTop(10);
+
         stage.addActor(table);
     }
 
@@ -191,13 +196,14 @@ public class Hud implements Disposable {
                 playerEnergyBar.setDrawable(new SpriteDrawable(new Sprite(playerEnergyBarTexture)));
                 currentEnergyLevel--;
             }
-            if (currentOpponentEnergyLevel > 0) {
-                opponentEnergyBarTexture = setEnergyUnitAt(opponentEnergyBarTexture, energymeterUnitOpponent,
-                        currentOpponentEnergyLevel);
-                opponentEnergyBar.setDrawable(new SpriteDrawable(new Sprite(opponentEnergyBarTexture)));
-                currentOpponentEnergyLevel--;
-            }
-            energybarReady = (currentEnergyLevel == 0 && currentOpponentEnergyLevel == 0);
+//            if (currentOpponentEnergyLevel > 0) {
+//                opponentEnergyBarTexture = setEnergyUnitAt(opponentEnergyBarTexture, energymeterUnitOpponent,
+//                        currentOpponentEnergyLevel);
+//                opponentEnergyBar.setDrawable(new SpriteDrawable(new Sprite(opponentEnergyBarTexture)));
+//                currentOpponentEnergyLevel--;
+//            }
+//            energybarReady = (currentEnergyLevel == 0 && currentOpponentEnergyLevel == 0);
+            energybarReady = currentEnergyLevel == 0;
         }
     }
 
@@ -237,7 +243,7 @@ public class Hud implements Disposable {
      * @param units number of units to be decrease
      */
     public void decreaseOpponentEnergy(int units) {
-        TextureRegion emptyUnit = GraphicUtils.createEmptyTexture(energymeterUnit.getRegionWidth(),
+    /*    TextureRegion emptyUnit = GraphicUtils.createEmptyTexture(energymeterUnit.getRegionWidth(),
                 energymeterUnit.getRegionHeight());
         for (int i = 0; i < units; i++) {
             if ((currentOpponentEnergyLevel + 1) <= MAX_ENERGY_UNIT) {
@@ -246,7 +252,7 @@ public class Hud implements Disposable {
                         currentOpponentEnergyLevel);
                 opponentEnergyBar.setDrawable(new SpriteDrawable(new Sprite(opponentEnergyBarTexture)));
             }
-        }
+        } */
     }
 
     /**
@@ -254,14 +260,14 @@ public class Hud implements Disposable {
      * @param units number of units to be increase
      */
     public void increaseOpponentEnergy(int units) {
-        for (int i = 0; i < units; i++) {
+    /*    for (int i = 0; i < units; i++) {
             if ((currentOpponentEnergyLevel - 1) >= 0) {
                 currentOpponentEnergyLevel--;
                 opponentEnergyBarTexture = setEnergyUnitAt(opponentEnergyBarTexture, energymeterUnit,
                         currentOpponentEnergyLevel);
                 opponentEnergyBar.setDrawable(new SpriteDrawable(new Sprite(opponentEnergyBarTexture)));
             }
-        }
+        } */
     }
 
     @Override
@@ -283,7 +289,9 @@ public class Hud implements Disposable {
     }
 
     public void setOpponentEnergymeterUnitColor(EnergyUnitSchema schema) {
+        /*
         TextureRegion textureRegion = new TextureRegion(textureAtlas.findRegion("energymeter_unit"));
         this.energymeterUnitOpponent = setEnergyUnitColor(schema, textureRegion);
+         */
     }
 }
