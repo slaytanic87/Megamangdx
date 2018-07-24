@@ -64,7 +64,7 @@ public class GraphicUtils {
     public static TextureRegion tintingSpriteColor(Color[] oldColors, Color[] targetColors,
                                                    TextureRegion textureRegion) {
         if (oldColors.length != targetColors.length) {
-            throw new RuntimeException("the length of the reference colors have to be the same "
+            throw new RuntimeException("the number of the reference colors have to be the same "
                    + "length as the target colors!");
         }
 

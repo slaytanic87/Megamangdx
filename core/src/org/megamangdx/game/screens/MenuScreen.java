@@ -43,10 +43,13 @@ public class MenuScreen extends AScreenState {
         table.bottom();
         Label startgame = new Label("Start Game",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label options = new Label("Options",
+        Label options = new Label("Info",
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 //        TextButton textButton = new TextButton();
-
+        table.add(startgame).expandX().padBottom(10);
+        table.row();
+        table.add(options).expandX().padBottom(10);
+        stage.addActor(table);
     }
 
     @Override
