@@ -48,7 +48,6 @@ public class PlayScreen extends AScreenState  {
 
         atlas = new TextureAtlas("megamanbase.atlas");
 
-        //this.texture = new Texture("badlogic.jpg");
         gameCamera = new OrthographicCamera();
 
         // make the gamewindow is stretch able with StretchViewport or
@@ -71,7 +70,11 @@ public class PlayScreen extends AScreenState  {
     }
 
     public void playMusic() {
-         // music.play();
+        if (!music.isPlaying()) {
+            music.play();
+        } else {
+            music.stop();
+        }
     }
 
     public void stopMusic() {
@@ -100,7 +103,6 @@ public class PlayScreen extends AScreenState  {
 
     @Override
     public void show() {
-        playMusic();
     }
 
     private void handleInput() {
@@ -126,6 +128,9 @@ public class PlayScreen extends AScreenState  {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             MegamanGame.DEBUG_RENDERER = !MegamanGame.DEBUG_RENDERER;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            playMusic();
         }
     }
 
